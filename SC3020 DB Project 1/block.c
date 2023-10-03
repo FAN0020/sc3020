@@ -1,6 +1,11 @@
 #include <stdio.h>
 
-#define MAX_RECORDS 1957764
+#define MAX_RECORDS 400
+
+struct Address {
+    int blockID; 
+    int offset;  
+};
 
 struct Record {
     int data; 
@@ -11,7 +16,16 @@ struct Block {
     struct Record recordsList[MAX_RECORDS]; // Create array to store the records
 };
 
-//initialise block
+struct Block* createBlock() {
+    struct Block* block = (struct Block*)malloc(sizeof(struct Block));
+    if (block != NULL) {
+        block->curRecords = 0;
+        // You can initialize other block properties here if needed
+    }
+    return block;
+}
+
+//initialise existing block
 void initBlock(struct Block* block) {
     block->curRecords = 0;
 }
@@ -28,20 +42,11 @@ int isBlockAvailable(struct Block* block) {
     return block->curRecords < MAX_RECORDS; 
 }
 
-int insertRecordIntoBlock(struct Block* block, struct Record rec) { //insert record in free space
-    for (int i = 0; i < MAX_RECORDS; i++) {
-        if (block->recordsList[i].data == 0) {
-            block->recordsList[i] = rec;
-            block->curRecords++;
-            return i;
-        }
-    }
-    return -1;
-}
 
 struct Record getRecord(struct Block* block, int offset) {
     return block->recordsList[offset];
 }
+
 
 void deleteRecord(struct Block* block, int offset) {
     block->recordsList[offset].data = 0; 

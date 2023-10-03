@@ -22,9 +22,11 @@ typedef struct Block {
 };
 
 // Function prototypes
+struct Block* createBlock();
 void initBlock(struct Block* block);
 struct Record getRecordFromBlock(struct Block* block, int recordPos);
 int getCurSize(struct Block* block);
+int getFirstAvailableBlockId(struct Disk* disk);
 int isBlockAvailable(struct Block* block);
 struct Address insertRecordIntoBlock(struct Disk* disk, int blockPtr, struct Record rec);
 struct Record getRecord(struct Disk* disk, struct Address add);

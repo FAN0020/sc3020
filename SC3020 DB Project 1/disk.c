@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "block.h"
+#include "LRUCache.h"
+
 
 struct Disk {
     struct Block** blocks; 
@@ -32,6 +34,19 @@ struct Record {
     int HOME_TEAM_WINS; 
 };
 
+// struct Record {
+//     char GAME_DATE_EST[20];
+//     int TEAM_ID_home;
+//     int PTS_home;
+//     float FG_PCT_home;
+//     float FT_PCT_home;
+//     float FG3_PCT_home;
+//     int AST_home;
+//     int REB_home;
+//     int HOME_TEAM_WINS; 
+// };
+
+
 struct Disk* createDisk(int diskSize, int blkSize, int lruCacheSize) {
     struct Disk* disk = (struct Disk*)malloc(sizeof(struct Disk));
     disk->memdiskSize = diskSize;
@@ -55,16 +70,42 @@ struct Disk* createDisk(int diskSize, int blkSize, int lruCacheSize) {
 struct Address writeRecordToStorage(struct Disk* disk, struct Record rec) {
     disk->numOfRecords++;
     int blockPtr = getFirstAvailableBlockId(disk);
+    if (blockPtr == -1) {
+        // Handle the case where no available blocks are found
+        return (struct Address){-1, -1};
+    }
     struct Address addressofRecordStored = insertRecordIntoBlock(disk, blockPtr, rec);
     return addressofRecordStored;
 }
 
 int getFirstAvailableBlockId(struct Disk* disk) {
-    if (disk->availableBlocks[0] == -1) {
-        return -1;
+    for (int i = 0; i < disk->memdiskSize / disk->blkSize; i++) {
+        if (disk->availableBlocks[i] != -1) {
+            return disk->availableBlocks[i];
+        }
     }
-    return disk->availableBlocks[0];
+    return -1; // No available blocks found
 }
+
+int insertRecord(struct Block* block, struct Record rec) {
+    for (int i = 0; i < MAX_RECORDS; i++) {
+        if (block->recordsList[i].GAME_DATE_EST == 0 &&
+            block->recordsList[i].TEAM_ID_home == 0 &&
+            block->recordsList[i].PTS_home == 0 &&
+            block->recordsList[i].FG_PCT_home == 0 &&
+            block->recordsList[i].FT_PCT_home == 0 &&
+            block->recordsList[i].FG3_PCT_home == 0 &&
+            block->recordsList[i].AST_home == 0 &&
+            block->recordsList[i].REB_home == 0 &&
+            block->recordsList[i].HOME_TEAM_WINS == 0) {
+            block->recordsList[i] = rec;
+            block->curRecords++;
+            return i; // Return the offset where the record was inserted
+        }
+    }
+    return -1; // Indicates that the block is full
+}
+
 
 struct Address insertRecordIntoBlock(struct Disk* disk, int blockPtr, struct Record rec) {
     if (blockPtr == -1) {
@@ -72,7 +113,6 @@ struct Address insertRecordIntoBlock(struct Disk* disk, int blockPtr, struct Rec
     }
     struct Block* block = disk->blocks[blockPtr];
     struct Address address;
-    address.blockID = blockPtr;
     address.offset = insertRecord(block, rec);
     disk->filledBlocks[blockPtr] = 1;
 
@@ -82,6 +122,8 @@ struct Address insertRecordIntoBlock(struct Disk* disk, int blockPtr, struct Rec
 
     return address;
 }
+
+
 
 int getNumberBlockUsed(struct Disk* disk) {
     int count = 0;

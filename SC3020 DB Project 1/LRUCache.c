@@ -2,10 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-
-struct Block {
-    int blockID;
-};
+#include "block.h"
 
 struct Node {
     int key;
