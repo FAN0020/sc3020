@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#define MAX_RECORDS 100
+#define MAX_RECORDS 1957764
 
 struct Record {
     int data; 
@@ -48,7 +48,7 @@ void deleteRecord(struct Block* block, int offset) {
     block->curRecords--;
 }
 
-int main() {
+/*int main() {
     struct Block block;
     initBlock(&block);
 
@@ -69,3 +69,4 @@ int main() {
 
     return 0;
 }
+*/
