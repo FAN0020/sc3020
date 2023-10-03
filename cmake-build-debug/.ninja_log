@@ -1,0 +1,9 @@
+# ninja log v5
+4	760	7180393987244491	build.ninja	70583f9bf835272f
+11	176	7180388970522609	CMakeFiles/sc3020_version3.dir/SC3020_DB_Project_1/block.c.obj	acbf7103a15f2e1c
+24	173	7180388970522609	CMakeFiles/sc3020_version3.dir/SC3020_DB_Project_1/address.c.obj	757e1507fe36ddf0
+14	192	7180388970737981	CMakeFiles/sc3020_version3.dir/SC3020_DB_Project_1/LRUCache.c.obj	a3d3308f24a8a
+28	193	7180388970748084	CMakeFiles/sc3020_version3.dir/simple_version/storage.c.obj	bea2e09b76f49eff
+1	180	7180388970597780	CMakeFiles/sc3020_version3.dir/SC3020_DB_Project_1/record.c.obj	c55fdae0c9df35e3
+4	186	7180388970667798	CMakeFiles/sc3020_version3.dir/simple_version/bt_page.c.obj	c3f0b7f0903b4ae6
+7	198	7180388970803177	CMakeFiles/sc3020_version3.dir/simple_version/bt_node.c.obj	d39341307e0d2ede
