@@ -2,7 +2,7 @@
 #define BT_NODE_H
 
 #include "storage.h"
-#include "storage.c"
+#include "bt_page.h"
 #include <string.h>
 
 // defining fixed variables and global variables
@@ -37,30 +37,53 @@ typedef struct _overflownode{
     struct _overflownode *next;
 } OverflowNode;
 
-typedef struct _node{
+/**
+ * Object containing information of node to be inserted/updated during insertion. 
+*/
+typedef struct _insertnode{
     float key; 
     double ptr; 
-}Node; 
+}InsertNode; 
+
+
+/**
+ * object containing information of nodes to be deleted/updated during deletion. 
+*/
+typedef struct _deletenode{
+    float key;
+    double ptr; 
+    float oldKey;
+    float newKey; 
+}DeleteNode; 
 
 // declare functions
 NonLeafNode* createNonleafNode(double ptr1, float key2, double ptr2);
-int insertNonLeafNodeKey(NonLeafNode* node, Node* insertNode);
+int insertNonLeafNodeKey(NonLeafNode* node, InsertNode* insertNode);
 void insertNLNodeKey(NonLeafNode* node,float key, double ptr);
 int searchNonLeafNodeKey(NonLeafNode* node, float key);
 double searchNonLeafNode(NonLeafNode* node, float key);
-int deleteNonLeafNodeKey(NonLeafNode* node, float key);
+int deleteNLNodeKey(NonLeafNode* node, float key);
+int deleteNonLeafNodeKey(NonLeafNode* node, DeleteNode* deleteNode);
+int deleteNonleafNode(NonLeafNode* node, DeleteNode* deleteNode);
+float retrieveNonLeafLowerboundKey(BTPage* page, double node);
 
 LeafNode* createLeafNode(float key, double ptr);
-int insertLeafNodeKey(LeafNode* node, Node* insertNode);
+int insertLeafNodeKey(LeafNode* node, InsertNode* insertNode);
 void insertLNodeKey(LeafNode* node,float key, double ptr);
 int searchLeafNodeKey(LeafNode* node, float key);
 double searchLeafNode(LeafNode* node, float key);
-int deleteLeafNodeKey(LeafNode* node, float key);
+int deleteLNodeKey(LeafNode* node, float key);
+int deleteLeafNodeKey(LeafNode* leftNode,LeafNode* node, DeleteNode* deleteNode);
+double deleteLeafNode(LeafNode* node);
 
 OverflowNode* createOverflowNode(double dataPtr);
-int insertOverflowRecord(OverflowNode* node, double dataPtr);
+int insertOverflowRecord(OverflowNode* node, InsertNode* insertNode);
+int deleteOverflowRecord(OverflowNode* node, DeleteNode* deleteNode);
+OverflowNode* lastOverflowNode(OverflowNode *node);
+double CheckOverflowNode(OverflowNode* node);
 
-
+int insertKey(BTPage *page, double nodePtr, InsertNode* insertNode);
+int deleteKey(BTPage* page, double leftPtr, double nodePtr, double rightPtr, InsertNode* insertNode);
 
 
 

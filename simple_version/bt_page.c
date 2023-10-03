@@ -9,9 +9,12 @@
  * @return the page that is created. 
 */
 BTPage* createPage(){
+    int i;
     BTPage* page = (BTPage*)malloc(sizeof(BTPage));
     // set all types to 0, signify empty slot, there is no node.
-    memset(page->types,0,sizeof(page->types));
+    for(i=0;i<P_REC_COUNT;i++){
+        page->types[i]=0;
+    }
     page->next = NULL; 
     return page; 
 }
@@ -42,7 +45,7 @@ void deletePage(BTPage *page){
 void insertPageRecord(BTPage *page, double pointer, int type){
     // search for empty slot then insert. 
     for(int i = 0; i<P_REC_COUNT;i++){
-        if (page->types[i] != 0){
+        if (page->types[i] == 0){
             page->types[i] = type; 
             page->pointers[i] = pointer; 
             return;

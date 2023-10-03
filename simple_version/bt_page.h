@@ -8,9 +8,8 @@
 
 /**
  * Object containing a list of BT blocks and its type.
- * @var is_free variable that tracks if page slot is free
- * @var types type of the bt node. 
- * @var pointers corresponding pointer referencing the bt node. 
+ * var types type of the bt node. 0) nothing 1) non-leaf, 2) leaf, 3) overflow
+ * var pointers corresponding pointer referencing the bt node. 
 */
 typedef struct _btpage{
     int types[P_REC_COUNT];
