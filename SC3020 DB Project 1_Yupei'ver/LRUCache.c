@@ -6,7 +6,7 @@
 
 struct Node {
     int key;
-    struct Block value;
+    struct Block* value;
     struct Node* next;
     struct Node* prev;
 };
@@ -22,7 +22,7 @@ struct LRUCache {
     struct Node** cacheMap;
 };
 
-struct Node* createNode(int key, struct Block value) {
+struct Node* createNode(int key, struct Block* value) {
     struct Node* node = (struct Node*)malloc(sizeof(struct Node));
     node->key = key;
     node->value = value;
@@ -75,14 +75,14 @@ struct Block* get(struct LRUCache* cache, int key) {
         if (node->key == key) {
             // Move the accessed node to the end
             moveToEnd(cache, node);
-            return &node->value;
+            return node->value;
         }
         node = node->next;
     }
     return NULL;
 }
 
-void LRUCache_put(struct LRUCache* cache, int key, struct Block value) {
+void put(struct LRUCache* cache, int key, struct Block* value) {
     struct Node* newNode = createNode(key, value);
     if (cache->list->head == NULL) {
         cache->list->head = newNode;

@@ -29,6 +29,6 @@ struct LRUCache {
 struct LRUCache* createLRUCache(int capacity);
 void freeLRUCache(struct LRUCache* cache);
 struct Block* get(struct LRUCache* cache, int key);
-void LRUCache_put(struct LRUCache* cache, int key, struct Block value);
+void put(struct LRUCache* cache, int key, struct Block* value);
 
 #endif /* LRUCACHE_H */

@@ -125,15 +125,15 @@ int getBlockAccesses(struct Disk* disk) {
 }
 
 struct Block* getBlock(struct Disk* disk, int blockNumber) {
-    struct Block* block = get(&disk->lruCache, blockNumber);
+    struct Block* block = get(disk->lruCache, blockNumber);
     if (block != NULL) {
         disk->blockAccessReduced++;
     }
     if (block == NULL && blockNumber >= 0) {
         // 1 I/O
-        block = &disk->blocks[blockNumber];
+        block = disk->blocks[blockNumber];
         disk->blockAccesses++;
-        put(&disk->lruCache, blockNumber, block);
+        put(disk->lruCache, blockNumber, block);
     }
     return block;
 }
