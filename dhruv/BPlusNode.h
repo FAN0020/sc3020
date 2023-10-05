@@ -4,7 +4,9 @@
 
 #ifndef UNTITLED1_BPLUSNODE_H
 #define UNTITLED1_BPLUSNODE_H
-
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
 #define ORDER 3
 
 
