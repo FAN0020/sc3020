@@ -66,7 +66,7 @@ int getFirstAvailableBlockId(struct Disk* disk) {
 
 int insertRecord(struct Block* block, struct Record rec) {
     for (int i = 0; i < MAX_RECORDS; i++) {
-        if (block->recordsList[i].GAME_DATE_EST == 0 &&
+        if (block->recordsList[i].GAME_DATE_EST[0] == '\0' &&
             block->recordsList[i].TEAM_ID_home == 0 &&
             block->recordsList[i].PTS_home == 0 &&
             block->recordsList[i].FG_PCT_home == 0 &&
@@ -142,14 +142,14 @@ int getBlockAccessReduced(struct Disk* disk) {
     return disk->blockAccessReduced;
 }
 
-struct Record getRecord(struct Disk* disk, struct Address add) {
-    struct Block* block = disk->blocks[add.blockID];
-    return getRecordFromBlock(block, add.offset);
-}
+// struct Record getRecord(struct Disk* disk, struct Address add) {
+//     struct Block* block = disk->blocks[add.blockID];
+//     return getRecordFromBlock(block, add.offset);
+// }
 
-struct Record getRecord(struct Block* block, int offset) {
-    return block->recordsList[offset];
-}
+// struct Record getRecord(struct Block* block, int offset) {
+//     return block->recordsList[offset];
+// }
 
 
 /*void deleteRecord(struct Block* block, int offset) {
@@ -225,9 +225,9 @@ void freeDisk(struct Disk* disk) {
 void experimentOne(struct Disk* disk) {
     printf("\n----------------------EXPERIMENT 1-----------------------\n");
     printf("Total Number of Records Stored: %d\n", disk->numOfRecords);
-    printf("Size of Each Record: %d Bytes\n", sizeof(struct Record));
-    printf("Number of Records Stored in a Block: %d\n", getTotalRecordsInBlock());
-    printf("Number of Blocks Allocated: %d\n", getNumberBlockUsed(disk));
+    printf("Size of Each Record: %zu Bytes\n", sizeof(struct Record));
+    //printf("Number of Records Stored in a Block: %d\n", getTotalRecordsInBlock());
+    //printf("Number of Blocks Allocated: %d\n", getNumberBlockUsed(disk));
 }
 
 int main() {
