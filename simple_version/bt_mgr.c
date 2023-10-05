@@ -19,7 +19,7 @@ BTree* createTree(char field[20]){
 }
 
 
-void insertBTreeKey(BTPage* page,BTree* tree,Node* insertNode){
+void insertBTreeKey(BTPage* page,BTree* tree,InsertNode* insertNode){
     int toUpdate = insertKey(page,tree->root,insertNode);
     if(toUpdate==1){
         // empty tree, make node the root. 
