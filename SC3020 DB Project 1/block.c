@@ -43,7 +43,7 @@ int isBlockAvailable(struct Block* block) {
 }
 
 
-struct Record getRecord(struct Block* block, int offset) {
+/*struct Record getRecord(struct Block* block, int offset) {
     return block->recordsList[offset];
 }
 
@@ -52,6 +52,7 @@ void deleteRecord(struct Block* block, int offset) {
     block->recordsList[offset].data = 0; 
     block->curRecords--;
 }
+*/
 
 /*int main() {
     struct Block block;
