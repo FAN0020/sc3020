@@ -51,7 +51,8 @@ struct LRUCache* createLRUCache(int capacity) {
 }
 
 // move a node to the end of the linked list
-void moveToEnd(struct LRUCache* cache, struct Node* node) {
+void moveToEnd(struct LRUCache* cache, struct Node* node)
+ {
     if (node == cache->list->tail) {
         return; // Node is already at the end
     }
