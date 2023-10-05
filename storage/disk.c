@@ -219,7 +219,11 @@ void freeDisk(struct Disk* disk) {
     }
     free(disk->blocks);
     free(disk->availableBlocks);
+//    free(disk->filledBlocks);
+if (disk->filledBlocks) {
     free(disk->filledBlocks);
+    disk->filledBlocks = NULL;
+}
     freeLRUCache(disk->lruCache);
     free(disk);
 }

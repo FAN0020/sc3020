@@ -10,7 +10,7 @@
 struct Disk {
     struct Block** blocks; 
     int* availableBlocks;
-    int* filledBlocks;
+    int* filledBlocks; // blocks that has any record
     int memdiskSize;
     int blkSize;
     int numOfRecords;
@@ -52,6 +52,7 @@ int getBlockAccessReduced(struct Disk* disk);
 void deleteRecord(struct Block* block, int offset);
 int runBruteForceSearch(struct Disk* disk, int FG_PCT_homeValue, int FG_PCT_homeValueUpperRange);
 void freeDisk(struct Disk* disk);
+int loadDataIntoDisk(struct Disk* disk);
 
 
 // void load_data_to_disk(struct Disk* disk, const char* filename){
