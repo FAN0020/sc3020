@@ -16,7 +16,7 @@ int main(){
     char field[20] = "test";
     BTPage* page = createPage();
     BTree* testTree = createTree(field);
-    Node* insertNode = (Node*) malloc(sizeof(Node));
+    InsertNode* insertNode = (InsertNode*) malloc(sizeof(InsertNode));
     NonLeafNode* root;
     LeafNode *child;
 

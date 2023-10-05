@@ -56,6 +56,12 @@ typedef struct _deletenode{
     float newKey; 
 }DeleteNode; 
 
+typedef struct _updateNode{
+    double lNode; 
+    double cNode;
+    double rNode; 
+}UpdateNode;
+
 // declare functions
 NonLeafNode* createNonleafNode(double ptr1, float key2, double ptr2);
 int insertNonLeafNodeKey(NonLeafNode* node, InsertNode* insertNode);
@@ -73,7 +79,7 @@ void insertLNodeKey(LeafNode* node,float key, double ptr);
 int searchLeafNodeKey(LeafNode* node, float key);
 double searchLeafNode(LeafNode* node, float key);
 int deleteLNodeKey(LeafNode* node, float key);
-int deleteLeafNodeKey(LeafNode* leftNode,LeafNode* node, DeleteNode* deleteNode);
+int deleteLeafNodeKey(LeafNode* node,double lNode,double rNode, DeleteNode* deleteNode);
 double deleteLeafNode(LeafNode* node);
 
 OverflowNode* createOverflowNode(double dataPtr);
@@ -83,8 +89,8 @@ OverflowNode* lastOverflowNode(OverflowNode *node);
 double CheckOverflowNode(OverflowNode* node);
 
 int insertKey(BTPage *page, double nodePtr, InsertNode* insertNode);
-int deleteKey(BTPage* page, double leftPtr, double nodePtr, double rightPtr, InsertNode* insertNode);
-
+int deleteKey(BTPage *page,double root, double nodePtr,DeleteNode* deleteNode, UpdateNode* nodeInfo);
+int getNodes(BTPage* page, double node,float key,UpdateNode* nodeInfo);
 
 
 

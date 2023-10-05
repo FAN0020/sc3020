@@ -16,6 +16,6 @@ typedef struct _btree{
 
 // declare functions
 BTree* createTree(char field[20]);
-void insertBTreeKey(BTPage* page, BTree* tree,Node* insertNode);
+void insertBTreeKey(BTPage* page, BTree* tree,InsertNode* insertNode);
 
 #endif //BT_MGR_H
