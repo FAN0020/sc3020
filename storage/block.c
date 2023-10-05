@@ -1,30 +1,29 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "block.h"
 
-#define MAX_RECORDS 400
+#define MAX_RECORDS 7
+#define BLOCK_SIZE 400
+#define RECORD_SIZE sizeof(struct Record)
 
-struct Address {
-    int blockID; 
-    int offset;  
-};
 
-struct Record {
-    char GAME_DATE_EST[20];
-    int TEAM_ID_home;
-    int PTS_home;
-    float FG_PCT_home;
-    float FT_PCT_home;
-    float FG3_PCT_home;
-    int AST_home;
-    int REB_home;
-    int HOME_TEAM_WINS; 
-};
+// struct Record {
+//     char GAME_DATE_EST[20];
+//     int TEAM_ID_home;
+//     int PTS_home;
+//     float FG_PCT_home;
+//     float FT_PCT_home;
+//     float FG3_PCT_home;
+//     int AST_home;
+//     int REB_home;
+//     int HOME_TEAM_WINS; 
+// };
 
-struct Block {
-    int curRecords; 
-    struct Record recordsList[MAX_RECORDS]; // Create array to store the records
-};
+// struct Block {
+//     int curRecords; 
+//     struct Record recordsList[MAX_RECORDS]; // Create array to store the records
+// };
 
 struct Block* createBlock() {
     struct Block* block = (struct Block*)malloc(sizeof(struct Block));

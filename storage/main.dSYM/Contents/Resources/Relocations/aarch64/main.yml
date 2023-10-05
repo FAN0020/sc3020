@@ -1,0 +1,21 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/fanyupei/Codes/sc3020/storage/main'
+relocations:
+  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: _createDisk, symObjAddr: 0x0, symBinAddr: 0x10000356C, symSize: 0x154 }
+  - { offsetInCU: 0x223, offset: 0x223, size: 0x8, addend: 0x0, symName: _createDisk, symObjAddr: 0x0, symBinAddr: 0x10000356C, symSize: 0x154 }
+  - { offsetInCU: 0x291, offset: 0x291, size: 0x8, addend: 0x0, symName: _createLRUCache, symObjAddr: 0x154, symBinAddr: 0x1000036C0, symSize: 0xA4 }
+  - { offsetInCU: 0x2E3, offset: 0x2E3, size: 0x8, addend: 0x0, symName: _load_data_to_disk, symObjAddr: 0x1F8, symBinAddr: 0x100003764, symSize: 0x1E0 }
+  - { offsetInCU: 0x370, offset: 0x370, size: 0x8, addend: 0x0, symName: _initBlock, symObjAddr: 0x3D8, symBinAddr: 0x100003944, symSize: 0x18 }
+  - { offsetInCU: 0x394, offset: 0x394, size: 0x8, addend: 0x0, symName: _createBlock, symObjAddr: 0x3F0, symBinAddr: 0x10000395C, symSize: 0x48 }
+  - { offsetInCU: 0x3BC, offset: 0x3BC, size: 0x8, addend: 0x0, symName: _getRecordFromBlock, symObjAddr: 0x438, symBinAddr: 0x1000039A4, symSize: 0x4C }
+  - { offsetInCU: 0x3F2, offset: 0x3F2, size: 0x8, addend: 0x0, symName: _getCurSize, symObjAddr: 0x484, symBinAddr: 0x1000039F0, symSize: 0x18 }
+  - { offsetInCU: 0x41A, offset: 0x41A, size: 0x8, addend: 0x0, symName: _isBlockAvailable, symObjAddr: 0x49C, symBinAddr: 0x100003A08, symSize: 0x24 }
+  - { offsetInCU: 0x442, offset: 0x442, size: 0x8, addend: 0x0, symName: _createNode, symObjAddr: 0x4C0, symBinAddr: 0x100003A2C, symSize: 0x58 }
+  - { offsetInCU: 0x486, offset: 0x486, size: 0x8, addend: 0x0, symName: _createLinkedList, symObjAddr: 0x518, symBinAddr: 0x100003A84, symSize: 0x38 }
+  - { offsetInCU: 0x4AE, offset: 0x4AE, size: 0x8, addend: 0x0, symName: _moveToEnd, symObjAddr: 0x550, symBinAddr: 0x100003ABC, symSize: 0xF0 }
+  - { offsetInCU: 0x4E0, offset: 0x4E0, size: 0x8, addend: 0x0, symName: _get, symObjAddr: 0x640, symBinAddr: 0x100003BAC, symSize: 0xB4 }
+  - { offsetInCU: 0x524, offset: 0x524, size: 0x8, addend: 0x0, symName: _put, symObjAddr: 0x6F4, symBinAddr: 0x100003C60, symSize: 0x18C }
+  - { offsetInCU: 0x58E, offset: 0x58E, size: 0x8, addend: 0x0, symName: _freeLRUCache, symObjAddr: 0x880, symBinAddr: 0x100003DEC, symSize: 0x84 }
+  - { offsetInCU: 0x5DC, offset: 0x5DC, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x904, symBinAddr: 0x100003E70, symSize: 0x4C }
+...

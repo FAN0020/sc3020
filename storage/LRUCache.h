@@ -9,7 +9,7 @@
 
 struct Node {
     int key;
-    struct Block value;
+    struct Block* value;
     struct Node* next;
     struct Node* prev;
 };
@@ -26,7 +26,10 @@ struct LRUCache {
 };
 
 // Function prototypes
+struct Node* createNode(int key, struct Block* value);
+struct LinkedList* createLinkedList();
 struct LRUCache* createLRUCache(int capacity);
+void moveToEnd(struct LRUCache* cache, struct Node* node);
 void freeLRUCache(struct LRUCache* cache);
 struct Block* get(struct LRUCache* cache, int key);
 void put(struct LRUCache* cache, int key, struct Block* value);

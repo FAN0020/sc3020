@@ -1,6 +1,10 @@
 #ifndef BLOCK_H
 #define BLOCK_H
 
+#define MAX_RECORDS 7
+#define BLOCK_SIZE 400
+#define RECORD_SIZE sizeof(struct Record)
+
 struct Record {
     char GAME_DATE_EST[20];
     int TEAM_ID_home;
@@ -13,7 +17,7 @@ struct Record {
     int HOME_TEAM_WINS; 
 };
 
-#define MAX_RECORDS 1957764
+//#define MAX_RECORDS 1957764
 
 // Define a structure for a block
 struct Block{

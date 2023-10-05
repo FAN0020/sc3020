@@ -2,25 +2,26 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-#include "block.h"
+// #include "block.h"
+#include "LRUCache.h"
 
-struct Node {
-    int key;
-    struct Block* value;
-    struct Node* next;
-    struct Node* prev;
-};
+// struct Node {
+//     int key;
+//     struct Block* value;
+//     struct Node* next;
+//     struct Node* prev;
+// };
 
-struct LinkedList {
-    struct Node* head;
-    struct Node* tail;
-};
+// struct LinkedList {
+//     struct Node* head;
+//     struct Node* tail;
+// };
 
-struct LRUCache {
-    int capacity;
-    struct LinkedList* list;
-    struct Node** cacheMap;
-};
+// struct LRUCache {
+//     int capacity;
+//     struct LinkedList* list;
+//     struct Node** cacheMap;
+// };
 
 struct Node* createNode(int key, struct Block* value) {
     struct Node* node = (struct Node*)malloc(sizeof(struct Node));
