@@ -1,22 +1,22 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <math.h>
 
-#define ORDER 3 // Adjust the order of the B+ tree as needed
+#define ORDER 4 // Adjust the order of the B+ tree as needed
 // Define B+ tree node structure
 typedef struct BPlusNode {
     int keys[ORDER - 1];
     struct BPlusNode* children[ORDER];
     bool is_leaf;
     int num_keys;
-    struct BPlusNode* next; // Pointer to next leaf node (used for range queries)
+    struct BPlusNode* next; // Pointer to the next leaf node (used for range queries)
 } BPlusNode;
 
 // Define B+ tree class
 typedef struct BPlusTree {
     BPlusNode* root;
 } BPlusTree;
-
 
 BPlusNode* createNode();
 BPlusTree* initializeTree();
@@ -31,12 +31,11 @@ void removeFromTree(BPlusTree* tree, BPlusNode* node, int key);
 void borrowFromPrev(BPlusNode* node, int index);
 void borrowFromNext(BPlusNode* node, int index);
 void deleteKey(BPlusTree* tree, int key);
-bool search(BPlusTree* tree, int key);
+
+BPlusNode * search(BPlusTree* tree, int key);
 void displayTree(BPlusNode* node);
 void inOrderTraversal(BPlusNode* node);
-
-
-
+BPlusNode * tree_search(BPlusNode * node, int K);
 
 // Create a new B+ tree node
 BPlusNode* createNode() {
@@ -75,8 +74,8 @@ void splitNode(BPlusTree* tree, BPlusNode* parent, BPlusNode* child, int index) 
     newNode->next = child->next;
     child->next = newNode;
 
-    int split_point = (ORDER - 1) / 2;
-    for (int i = split_point + 1, j = 0; i < ORDER; i++, j++) {
+    int split_point = (ORDER - 1) / 2;  // Updated split point
+    for (int i = split_point, j = 0; i < ORDER - 1; i++, j++) {
         newNode->keys[j] = child->keys[i];
         child->keys[i] = 0;
         newNode->children[j] = child->children[i];
@@ -101,20 +100,21 @@ void insert(BPlusTree* tree, int key) {
     if (root->num_keys == ORDER - 1) {
         BPlusNode* newNode = createNode();
         newNode->children[0] = root;
+        tree->root = newNode;  // Update the root node here
+
+        // Split the old root
         splitNode(tree, newNode, root, 0);
-        tree->root = newNode;
         insertInNode(newNode, key);
     } else {
         BPlusNode* current = root;
         while (!current->is_leaf) {
-            int i = current->num_keys - 1;
-            while (i >= 0 && key < current->keys[i]) {
-                i--;
+            int i = 0;
+            while (i < current->num_keys && key >= current->keys[i]) {
+                i++;
             }
-            i++;
             if (current->children[i]->num_keys == ORDER - 1) {
                 splitNode(tree, current, current->children[i], i);
-                if (key > current->keys[i]) {
+                if (key >= current->keys[i]) {
                     i++;
                 }
             }
@@ -301,27 +301,25 @@ void deleteKey(BPlusTree* tree, int key) {
 }
 
 // Search for a key in the B+ tree
-bool search(BPlusTree* tree, int key) {
-    BPlusNode* root = tree->root;
-    BPlusNode* current = root;
+BPlusNode * search(BPlusTree* tree, int key) {
+    return tree_search(tree->root, key);
+}
 
-    while (current) {
-        int i = 0;
-        while (i < current->num_keys && key >= current->keys[i]) {
-            if (key == current->keys[i]) {
-                return true; // Key found
-            }
-            i++;
-        }
-
-        if (!current->is_leaf) {
-            current = current->children[i];
-        } else {
-            break; // Key not found in leaf node
-        }
+BPlusNode * tree_search(BPlusNode * node, int K) {
+    if (!node) {
+        return NULL;
     }
-
-    return false; // Key not found
+    int i = 0;
+    while (i < node->num_keys && K > node->keys[i]) {
+        i++;
+    }
+    if (i < node->num_keys && K == node->keys[i]) {
+        return node;
+    }
+    if (node->is_leaf) {
+        return NULL;
+    }
+    return tree_search(node->children[i], K);
 }
 
 // Display the B+ tree (for debugging)
@@ -364,8 +362,17 @@ int main() {
     inOrderTraversal(tree->root);
     printf("\n");
 
-    int search_key = 5;
-    if (search(tree, search_key)) {
+    int search_key = 12;
+    BPlusNode* result = search(tree, search_key);
+    if (result != NULL) {
+        printf("%d found in the B+ tree.\n", search_key);
+    } else {
+        printf("%d not found in the B+ tree.\n", search_key);
+    }
+
+    search_key = 4;
+    result = search(tree, search_key);
+    if (result != NULL) {
         printf("%d found in the B+ tree.\n", search_key);
     } else {
         printf("%d not found in the B+ tree.\n", search_key);
@@ -373,9 +380,14 @@ int main() {
 
     int delete_key = 4;
     deleteKey(tree, delete_key);
-    printf("In-order traversal after deleting %d: ", delete_key);
-    inOrderTraversal(tree->root);
-    printf("\n");
+
+    search_key = 4;
+    result = search(tree, search_key);
+    if (result != NULL) {
+        printf("%d found in the B+ tree.\n", search_key);
+    } else {
+        printf("%d not found in the B+ tree.\n", search_key);
+    }
 
     // Clean up and free memory
     // ...
