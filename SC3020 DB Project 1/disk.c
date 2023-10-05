@@ -22,17 +22,7 @@ struct Address {
     int offset; 
 };
 
-struct Record {
-    char GAME_DATE_EST[20];
-    int TEAM_ID_home;
-    int PTS_home;
-    float FG_PCT_home;
-    float FT_PCT_home;
-    float FG3_PCT_home;
-    int AST_home;
-    int REB_home;
-    int HOME_TEAM_WINS; 
-};
+
 
 // struct Record {
 //     char GAME_DATE_EST[20];
@@ -67,6 +57,31 @@ struct Disk* createDisk(int diskSize, int blkSize, int lruCacheSize) {
     return disk;
 }
 
+int getFirstAvailableBlockId(struct Disk* disk) {
+    for (int i = 0; i < disk->memdiskSize / disk->blkSize; i++) {
+        if (disk->availableBlocks[i] != -1) {
+            return disk->availableBlocks[i];
+        }
+    }
+    return -1; // No available blocks found
+}
+
+struct Address insertRecordIntoBlock(struct Disk* disk, int blockPtr, struct Record rec) {
+    if (blockPtr == -1) {
+        return (struct Address){-1, -1};
+    }
+    struct Block* block = disk->blocks[blockPtr];
+    struct Address address;
+    address.offset = insertRecord(block, rec);
+    disk->filledBlocks[blockPtr] = 1;
+
+    if (!isBlockAvailable(block)) {
+        disk->availableBlocks[blockPtr] = -1;
+    }
+
+    return address;
+}
+
 struct Address writeRecordToStorage(struct Disk* disk, struct Record rec) {
     disk->numOfRecords++;
     int blockPtr = getFirstAvailableBlockId(disk);
@@ -78,14 +93,6 @@ struct Address writeRecordToStorage(struct Disk* disk, struct Record rec) {
     return addressofRecordStored;
 }
 
-int getFirstAvailableBlockId(struct Disk* disk) {
-    for (int i = 0; i < disk->memdiskSize / disk->blkSize; i++) {
-        if (disk->availableBlocks[i] != -1) {
-            return disk->availableBlocks[i];
-        }
-    }
-    return -1; // No available blocks found
-}
 
 int insertRecord(struct Block* block, struct Record rec) {
     for (int i = 0; i < MAX_RECORDS; i++) {
@@ -105,25 +112,6 @@ int insertRecord(struct Block* block, struct Record rec) {
     }
     return -1; // Indicates that the block is full
 }
-
-
-struct Address insertRecordIntoBlock(struct Disk* disk, int blockPtr, struct Record rec) {
-    if (blockPtr == -1) {
-        return (struct Address){-1, -1};
-    }
-    struct Block* block = disk->blocks[blockPtr];
-    struct Address address;
-    address.offset = insertRecord(block, rec);
-    disk->filledBlocks[blockPtr] = 1;
-
-    if (!isBlockAvailable(block)) {
-        disk->availableBlocks[blockPtr] = -1;
-    }
-
-    return address;
-}
-
-
 
 int getNumberBlockUsed(struct Disk* disk) {
     int count = 0;
@@ -161,6 +149,33 @@ struct Record getRecord(struct Disk* disk, struct Address add) {
     struct Block* block = disk->blocks[add.blockID];
     return getRecordFromBlock(block, add.offset);
 }
+
+struct Record getRecord(struct Block* block, int offset) {
+    return block->recordsList[offset];
+}
+
+
+/*void deleteRecord(struct Block* block, int offset) {
+    block->recordsList[offset].data = 0; 
+    block->curRecords--;
+}
+*/
+
+void deleteRecord(struct Block* block, int offset) {
+    strcpy(block->recordsList[offset].GAME_DATE_EST, "");
+    block->recordsList[offset].TEAM_ID_home = -1;
+    block->recordsList[offset].PTS_home = -1;
+    block->recordsList[offset].FG_PCT_home = -1.0f; // Float value
+    block->recordsList[offset].FT_PCT_home = -1.0f; // Float value
+    block->recordsList[offset].FG3_PCT_home = -1.0f; // Float value
+    block->recordsList[offset].AST_home = -1;
+    block->recordsList[offset].REB_home = -1;
+    block->recordsList[offset].HOME_TEAM_WINS = -1;
+
+    block->curRecords--;
+}
+
+
 
 int runBruteForceSearch(struct Disk* disk, int FG_PCT_homeValue, int FG_PCT_homeValueUpperRange) {
     int countBlockAccess = 0;
@@ -210,7 +225,7 @@ void experimentOne(struct Disk* disk) {
     printf("Number of Blocks Allocated: %d\n", getNumberBlockUsed(disk));
 }
 
-/*int main() {
+int main() {
     // Example usage
     struct Disk* disk = createDisk(500000, sizeof(struct Block), 256);
     
@@ -228,4 +243,3 @@ void experimentOne(struct Disk* disk) {
     
     return 0;
 }
-*/
