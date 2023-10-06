@@ -10,9 +10,27 @@
 #include "LRUCache.c"
 
 int main() {
-    struct Disk* disk = createDisk(500 * 1024 * 1024, MAX_RECORDS, 100); // Example values, you can modify as per your requirements.
-    load_data_to_disk(disk, "/Users/fanyupei/Codes/sc3020/game.txt");
-    // Add other functionalities or clean-up as needed...
+    //create a Disk
+    int diskSize = 500 * 1024 * 1024; // 500 MB
+    int blkSize = 400; // 400 B
+    int lruCacheSize = 50; // Example size
+    struct Disk* disk = createDisk(diskSize, blkSize, lruCacheSize);
+
+    //Load the data
+    if (!loadData(disk, "games.txt")) {
+        freeDisk(disk);
+        return 1;
+    }
+    //visualizeDisk(disk);
+
+    //EXPERIMENT 1
+    printf("\n----------------------EXPERIMENT 1-----------------------\n");
+    printf("Total Number of Records Stored: %d\n", disk->numOfRecords);
+    printf("Size of Each Record: %zu Bytes\n", sizeof(struct Record));
+    printf("Number of records stored in a block: %d\n", MAX_RECORDS);
+    printf("Number of blocks for storing the data: %d\n", getNumberBlockUsed(disk));
+    
+    // free the memory
+    freeDisk(disk);
     return 0;
 }
-

@@ -1,0 +1,368 @@
+** main.c **
+// int main() {
+//     // Step 1: Create a Disk
+//     int diskSize = 500 * 1024 * 1024; // 500 MB
+//     int blkSize = 400; // 400 B
+//     int lruCacheSize = 50; // Example size
+//     struct Disk* disk = createDisk(diskSize, blkSize, lruCacheSize);
+    
+//     // Step 2: Load the file
+//     FILE *file = fopen("games.txt", "r");
+//     if (file == NULL) {
+//         printf("Failed to open the file.\n");
+//         return 1;
+//     }
+
+//     char line[255];
+//     fgets(line, sizeof(line), file); // Skip header line
+
+//     int currentBlockId = 0; 
+//     struct Block* currentBlock = getBlock(disk, currentBlockId);
+
+//      int lineCounter = 0;  // To track the line number
+
+//     while (fgets(line, sizeof(line), file)) {
+//         lineCounter++;
+
+//         // Debug
+//         printf("Line %d: %s", lineCounter, line);
+
+//         // Parse the line to create a record
+//         struct Record record;
+
+//         // Parse the date string and convert it to an integer
+//         int day, month, year;
+//         sscanf(line, "%d/%d/%d %d %d %f %f %f %d %d %s", &day, &month, &year, &record.TEAM_ID_home,
+//                &record.PTS_home, &record.FG_PCT_home, &record.FT_PCT_home,
+//                &record.FG3_PCT_home, &record.AST_home, &record.REB_home,
+//                &record.HOME_TEAM_WINS);
+
+//         // Convert the date to a single integer (e.g., 20220425)
+//         record.GAME_DATE_EST = (year * 10000) + (month * 100) + day;
+
+//         // Step 3: Populate the Disk
+//         if (currentBlock->curRecords >= (int)(MAX_RECORDS)) {  // Assuming average of 7 records per block
+//         disk->filledBlocks[currentBlockId] = 1; // Mark the block as filled
+//         currentBlockId++;
+//         currentBlock = getBlock(disk, currentBlockId);
+//         initBlock(currentBlock);  // Ensure the block is initialized properly
+//     }
+
+//         if (currentBlock->curRecords >= (int)(MAX_RECORDS)) {
+//             printf("Block is full.\n");
+//             return 1;
+//         }
+
+//         writeRecordToStorage(disk, record);
+        
+//         // Debug
+//         printf("Record No.: %d, Stored in Block: %d\n", disk->numOfRecords, currentBlockId);
+//     }
+//     fclose(file);
+//     printf("Data loaded into disk.\n");
+//     visualizeDisk(disk);
+//     printf("\n----------------------EXPERIMENT 1-----------------------\n");
+//     printf("Total Number of Records Stored: %d\n", disk->numOfRecords);
+//     printf("Size of Each Record: %zu Bytes\n", sizeof(struct Record));
+//     printf("Number of records stored in a block: %d\n", (currentBlockId == 0 ? currentBlock->curRecords : (int)(MAX_RECORDS)));
+//     printf("Number of blocks for storing the data: %d\n", currentBlockId + 1); // +1 since it's 0-indexed
+    
+//     // free the memory
+//     freeDisk(disk);
+//     return 0;
+// }
+
+
+
+
+** disk.c **
+// void load_data_to_disk(struct Disk* disk, const char* filename){
+//     FILE* file = fopen(filename, "r");
+//     if (!file) {
+//         printf("Failed to open file: %s\n", filename);
+//         return;
+//     }
+//     char line[256]; // Buffer for each line in the file.
+//     fgets(line, sizeof(line), file); // Skip the first line.
+//     struct Block* current_block = NULL;
+//     int block_index = 0;
+//     while (fgets(line, sizeof(line), file) != NULL) {
+//         if (!current_block || current_block->curRecords >= MAX_RECORDS) {
+//             // Start with a new block.
+//             current_block = disk->blocks[block_index++];
+//             initBlock(current_block);
+//         }
+//         struct Record record;
+//         sscanf(line, "%19s\t%d\t%d\t%f\t%f\t%f\t%d\t%d\t%d", 
+//             record.GAME_DATE_EST, 
+//             &record.TEAM_ID_home, 
+//             &record.PTS_home,
+//             &record.FG_PCT_home, 
+//             &record.FT_PCT_home,
+//             &record.FG3_PCT_home, 
+//             &record.AST_home, 
+//             &record.REB_home, 
+//             &record.HOME_TEAM_WINS
+//         );
+//         current_block->recordsList[current_block->curRecords] = record;
+//         current_block->curRecords++;
+//     }
+//     fclose(file);
+// };
+
+//void visualizeBlock(struct Disk* disk, int blockID);
+//void visualizeDisk(struct Disk* disk);
+
+
+// struct Disk* createDisk(int diskSize, int blkSize, int lruCacheSize) {
+//     struct Disk* disk = (struct Disk*)malloc(sizeof(struct Disk));
+//     disk->memdiskSize = diskSize;
+//     disk->blkSize = blkSize;
+//     disk->blocks = (struct Block**)malloc(sizeof(struct Block*) * (diskSize / blkSize));
+//     disk->availableBlocks = (int*)malloc(sizeof(int) * (diskSize / blkSize));
+//     disk->filledBlocks = (int*)malloc(sizeof(int) * (diskSize / blkSize));
+//     disk->numOfRecords = 0;
+//     disk->blockAccesses = 0;
+//     disk->blockAccessReduced = 0;
+//     disk->lruCache = createLRUCache(lruCacheSize);
+//     for (int i = 0; i < diskSize / blkSize; i++) {
+//         disk->blocks[i] = createBlock(); 
+//         disk->availableBlocks[i] = i;
+//     }
+//     return disk;
+// }
+
+// int insertRecord(struct Block* block, struct Record rec) {
+//     for (int i = 0; i < MAX_RECORDS; i++) {
+//         if (block->recordsList[i].GAME_DATE_EST == 0 &&
+//             block->recordsList[i].TEAM_ID_home[0] == '\0' &&
+//             block->recordsList[i].PTS_home == 0 &&
+//             block->recordsList[i].FG_PCT_home == 0 &&
+//             block->recordsList[i].FT_PCT_home == 0 &&
+//             block->recordsList[i].FG3_PCT_home == 0 &&
+//             block->recordsList[i].AST_home == 0 &&
+//             block->recordsList[i].REB_home == 0 &&
+//             block->recordsList[i].HOME_TEAM_WINS == 0) {
+//             // Insert the record
+//             block->recordsList[i] = rec;
+//             block->curRecords++;
+//             return i; // Return the offset where the record was inserted
+//         }
+//     }
+//     return -1; // Indicates that the block is full
+// }
+
+// struct Record getRecord(struct Disk* disk, struct Address add) {
+//     struct Block* block = disk->blocks[add.blockID];
+//     return getRecordFromBlock(block, add.offset);
+// }
+// struct Record getRecord(struct Block* block, int offset) {
+//     return block->recordsList[offset];
+// }
+/*void deleteRecord(struct Block* block, int offset) {
+    block->recordsList[offset].data = 0; 
+    block->curRecords--;
+}
+*/
+// void deleteRecord(struct Block* block, int offset) {
+//     // Clear the data fields
+//     block->recordsList[offset].GAME_DATE_EST = -1;
+//     strcpy(block->recordsList[offset].TEAM_ID_home, ""); // Assuming TEAM_ID_home is a char array
+//     block->recordsList[offset].PTS_home = -1;
+//     block->recordsList[offset].FG_PCT_home = -1.0f; // Float value
+//     block->recordsList[offset].FT_PCT_home = -1.0f; // Float value
+//     block->recordsList[offset].FG3_PCT_home = -1.0f; // Float value
+//     block->recordsList[offset].AST_home = -1;
+//     block->recordsList[offset].REB_home = -1;
+//     block->recordsList[offset].HOME_TEAM_WINS = 0; // Assuming HOME_TEAM_WINS is a boolean (0 for false, 1 for true)
+//     block->curRecords--;
+// }
+
+// void deleteRecord(struct Disk* disk, struct Address* addList, int numRecordsToDelete) {
+//     for (int i = 0; i < numRecordsToDelete; i++) {
+//         int blockId = addList[i].blockID;
+//         int offset = addList[i].offset;
+//         struct Block* block = disk->blocks[blockId];
+//         deleteRecordInBlock(block, offset);
+//         disk->availableBlocks[blockId] = 1;
+//     }
+// }
+
+// void experimentOne(struct Disk* disk) {
+//     printf("\n----------------------EXPERIMENT 1-----------------------\n");
+//     printf("Total Number of Records Stored: %d\n", disk->numOfRecords);
+//     printf("Size of Each Record: %zu Bytes\n", sizeof(struct Record));
+//     //printf("Number of Records Stored in a Block: %d\n", getTotalRecordsInBlock());
+//     //printf("Number of Blocks Allocated: %d\n", getNumberBlockUsed(disk));
+// }
+
+// int main() {
+//     // Example usage
+//     struct Disk* disk = createDisk(500000, sizeof(struct Block), 256);
+//     struct Record rec1 = {"tconst1", 7, 100};
+//     struct Record rec2 = {"tconst2", 8, 200};
+//     struct Record rec3 = {"tconst3", 6, 50};
+//     struct Address addr1 = writeRecordToStorage(disk, rec1);
+//     struct Address addr2 = writeRecordToStorage(disk, rec2);
+//     struct Address addr3 = writeRecordToStorage(disk, rec3);
+//     experimentOne(disk);
+//     freeDisk(disk);
+//     return 0;
+// }
+
+
+// Assume that other structures and functions are already defined...
+// void load_data_to_disk(struct Disk* disk, const char* filename) {
+//     FILE* file = fopen(filename, "r");
+//     if (!file) {
+//         printf("Failed to open file: %s\n", filename);
+//         return;
+//     }
+//     char line[256]; // Buffer for each line in the file.
+//     fgets(line, sizeof(line), file); // Skip the first line.
+//     struct Block* current_block = NULL;
+//     int block_index = 0;
+//     while (fgets(line, sizeof(line), file) != NULL) {
+//         if (!current_block || current_block->curRecords >= MAX_RECORDS) {
+//             // Start with a new block.
+//             current_block = disk->blocks[block_index++];
+//             initBlock(current_block);
+//         }
+//         struct Record record;
+//         sscanf(line, "%19s\t%d\t%d\t%f\t%f\t%f\t%d\t%d\t%d", 
+//             record.GAME_DATE_EST, 
+//             &record.TEAM_ID_home, 
+//             &record.PTS_home,
+//             &record.FG_PCT_home, 
+//             &record.FT_PCT_home,
+//             &record.FG3_PCT_home, 
+//             &record.AST_home, 
+//             &record.REB_home, 
+//             &record.HOME_TEAM_WINS
+//         );
+//         current_block->recordsList[current_block->curRecords] = record;
+//         current_block->curRecords++;
+//     }
+//     fclose(file);
+// }
+
+// int main() {
+//     struct Disk* disk = createDisk(500 * 1024 * 1024, MAX_RECORDS, 100); // Example values, you can modify as per your requirements.
+//     load_data_to_disk(disk, "/Users/fanyupei/Codes/sc3020/game.txt");
+//     // Add other functionalities or clean-up as needed...
+//     return 0;
+// }
+
+
+
+
+** block.c **
+/*struct Record getRecord(struct Block* block, int offset) {
+    return block->recordsList[offset];
+}
+void deleteRecord(struct Block* block, int offset) {
+    block->recordsList[offset].data = 0; 
+    block->curRecords--;
+}
+*/
+/*int main() {
+    struct Block block;
+    initBlock(&block);
+
+    struct Record record1;
+    record1.data = 42;
+    struct Record record2;
+    record2.data = 99;
+
+    int offset1 = insertRecordIntoBlock(&block, record1);
+    int offset2 = insertRecordIntoBlock(&block, record2);
+
+    printf("Current size of the block: %d\n", getCurSize(&block));
+    printf("Record 1 data: %d\n", getRecord(&block, offset1).data);
+    printf("Record 2 data: %d\n", getRecord(&block, offset2).data);
+
+    deleteRecord(&block, offset1);
+    printf("After deleting record 1, current size of the block: %d\n", getCurSize(&block));
+
+    return 0;
+}
+*/
+//struct Address insertRecordIntoBlock(struct Disk* disk, int blockPtr, struct Record rec);
+//struct Record getRecord(struct Disk* disk, struct Address add);
+//void deleteRecord(struct Disk* disk, struct Address* addList, int numRecordsToDelete);
+//int getFirstAvailableBlockId(struct Disk* disk);
+
+
+
+
+** record.c **
+/*int main() {
+    // Example
+    struct Record record = createRecord("ABC1234567", 8.5f, 1000);
+    char formattedString[128];
+    toString(&record, formattedString, sizeof(formattedString));
+    printf("%s\n", formattedString);
+
+    return 0;
+}
+*/
+
+
+
+** LRUCache.c **
+// struct Node {
+//     int key;
+//     struct Block* value;
+//     struct Node* next;
+//     struct Node* prev;
+// };
+
+// struct LinkedList {
+//     struct Node* head;
+//     struct Node* tail;
+// };
+
+// struct LRUCache {
+//     int capacity;
+//     struct LinkedList* list;
+//     struct Node** cacheMap;
+// };
+
+/*int main() {
+    struct LRUCache* cache = createLRUCache(3);
+    struct Block block1;
+    block1.blockID = 1;
+    struct Block block2;
+    block2.blockID = 2;
+    struct Block block3;
+    block3.blockID = 3;
+    struct Block block4;
+    block4.blockID = 4;
+    put(cache, 1, block1);
+    put(cache, 2, block2);
+    put(cache, 3, block3);
+    put(cache, 4, block4); 
+    struct Block* result = get(cache, 1); 
+    if (result == NULL) {
+        printf("Block 1 is not in the cache.\n");
+    }
+    result = get(cache, 4);
+    if (result != NULL) {
+        printf("Block 4 is in the cache. Block ID: %d\n", result->blockID);
+    }
+    freeLRUCache(cache);
+
+    return 0;
+}
+*/\
+
+
+** address.c **
+/*int main() {
+    struct Address address = createAddress(1, 42);
+    printf("Block ID: %d\n", getBlockId(address));
+    printf("Offset: %d\n", getOffset(address));
+    toString(address);
+    return 0;
+}
+*/
