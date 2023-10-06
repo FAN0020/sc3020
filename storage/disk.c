@@ -68,8 +68,8 @@ int getFirstAvailableBlockId(struct Disk* disk) {
 
 int insertRecord(struct Block* block, struct Record rec) {
     for (int i = 0; i < MAX_RECORDS; i++) {
-        if (block->recordsList[i].GAME_DATE_EST[0] == '\0' &&
-            block->recordsList[i].TEAM_ID_home == 0 &&
+        if (block->recordsList[i].GAME_DATE_EST == 0 &&
+            block->recordsList[i].TEAM_ID_home[0] == '\0' &&
             block->recordsList[i].PTS_home == 0 &&
             block->recordsList[i].FG_PCT_home == 0 &&
             block->recordsList[i].FT_PCT_home == 0 &&
@@ -77,13 +77,17 @@ int insertRecord(struct Block* block, struct Record rec) {
             block->recordsList[i].AST_home == 0 &&
             block->recordsList[i].REB_home == 0 &&
             block->recordsList[i].HOME_TEAM_WINS == 0) {
+            
+            // Insert the record
             block->recordsList[i] = rec;
             block->curRecords++;
+            
             return i; // Return the offset where the record was inserted
         }
     }
     return -1; // Indicates that the block is full
 }
+
 
 struct Address insertRecordIntoBlock(struct Disk* disk, int blockPtr, struct Record rec) {
     if (blockPtr == -1) {
@@ -161,18 +165,20 @@ int getBlockAccessReduced(struct Disk* disk) {
 */
 
 void deleteRecord(struct Block* block, int offset) {
-    strcpy(block->recordsList[offset].GAME_DATE_EST, "");
-    block->recordsList[offset].TEAM_ID_home = -1;
+    // Clear the data fields
+    block->recordsList[offset].GAME_DATE_EST = -1;
+    strcpy(block->recordsList[offset].TEAM_ID_home, ""); // Assuming TEAM_ID_home is a char array
     block->recordsList[offset].PTS_home = -1;
     block->recordsList[offset].FG_PCT_home = -1.0f; // Float value
     block->recordsList[offset].FT_PCT_home = -1.0f; // Float value
     block->recordsList[offset].FG3_PCT_home = -1.0f; // Float value
     block->recordsList[offset].AST_home = -1;
     block->recordsList[offset].REB_home = -1;
-    block->recordsList[offset].HOME_TEAM_WINS = -1;
+    block->recordsList[offset].HOME_TEAM_WINS = 0; // Assuming HOME_TEAM_WINS is a boolean (0 for false, 1 for true)
 
     block->curRecords--;
 }
+
 
 
 

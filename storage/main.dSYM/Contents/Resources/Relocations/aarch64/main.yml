@@ -1,33 +1,32 @@
 ---
 triple:          'arm64-apple-darwin'
-binary-path:     '/Users/fanyupei/Codes/sc3020/storage/main'
+binary-path:     '/Users/keshavsruthi/Documents/code/sc3020/storage/main'
 relocations:
-  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: _createDisk, symObjAddr: 0x0, symBinAddr: 0x100002864, symSize: 0x154 }
-  - { offsetInCU: 0x223, offset: 0x223, size: 0x8, addend: 0x0, symName: _createDisk, symObjAddr: 0x0, symBinAddr: 0x100002864, symSize: 0x154 }
-  - { offsetInCU: 0x291, offset: 0x291, size: 0x8, addend: 0x0, symName: _createLRUCache, symObjAddr: 0x154, symBinAddr: 0x1000029B8, symSize: 0xA4 }
-  - { offsetInCU: 0x2E3, offset: 0x2E3, size: 0x8, addend: 0x0, symName: _getFirstAvailableBlockId, symObjAddr: 0x1F8, symBinAddr: 0x100002A5C, symSize: 0x9C }
-  - { offsetInCU: 0x327, offset: 0x327, size: 0x8, addend: 0x0, symName: _insertRecord, symObjAddr: 0x294, symBinAddr: 0x100002AF8, symSize: 0x22C }
-  - { offsetInCU: 0x37A, offset: 0x37A, size: 0x8, addend: 0x0, symName: _insertRecordIntoBlock, symObjAddr: 0x4C0, symBinAddr: 0x100002D24, symSize: 0x114 }
-  - { offsetInCU: 0x3DD, offset: 0x3DD, size: 0x8, addend: 0x0, symName: _isBlockAvailable, symObjAddr: 0x5D4, symBinAddr: 0x100002E38, symSize: 0x24 }
-  - { offsetInCU: 0x405, offset: 0x405, size: 0x8, addend: 0x0, symName: _writeRecordToStorage, symObjAddr: 0x5F8, symBinAddr: 0x100002E5C, symSize: 0xE0 }
-  - { offsetInCU: 0x45A, offset: 0x45A, size: 0x8, addend: 0x0, symName: _getNumberBlockUsed, symObjAddr: 0x6D8, symBinAddr: 0x100002F3C, symSize: 0x8C }
-  - { offsetInCU: 0x4AC, offset: 0x4AC, size: 0x8, addend: 0x0, symName: _getBlockAccesses, symObjAddr: 0x764, symBinAddr: 0x100002FC8, symSize: 0x18 }
-  - { offsetInCU: 0x4D4, offset: 0x4D4, size: 0x8, addend: 0x0, symName: _getBlock, symObjAddr: 0x77C, symBinAddr: 0x100002FE0, symSize: 0xC4 }
-  - { offsetInCU: 0x518, offset: 0x518, size: 0x8, addend: 0x0, symName: _get, symObjAddr: 0x840, symBinAddr: 0x1000030A4, symSize: 0xB4 }
-  - { offsetInCU: 0x55C, offset: 0x55C, size: 0x8, addend: 0x0, symName: _put, symObjAddr: 0x8F4, symBinAddr: 0x100003158, symSize: 0x18C }
-  - { offsetInCU: 0x5C6, offset: 0x5C6, size: 0x8, addend: 0x0, symName: _getBlockAccessReduced, symObjAddr: 0xA80, symBinAddr: 0x1000032E4, symSize: 0x18 }
-  - { offsetInCU: 0x5EE, offset: 0x5EE, size: 0x8, addend: 0x0, symName: _deleteRecord, symObjAddr: 0xA98, symBinAddr: 0x1000032FC, symSize: 0x128 }
-  - { offsetInCU: 0x620, offset: 0x620, size: 0x8, addend: 0x0, symName: _runBruteForceSearch, symObjAddr: 0xBC0, symBinAddr: 0x100003424, symSize: 0x180 }
-  - { offsetInCU: 0x6FE, offset: 0x6FE, size: 0x8, addend: 0x0, symName: _getCurSize, symObjAddr: 0xD40, symBinAddr: 0x1000035A4, symSize: 0x18 }
-  - { offsetInCU: 0x726, offset: 0x726, size: 0x8, addend: 0x0, symName: _getRecordFromBlock, symObjAddr: 0xD58, symBinAddr: 0x1000035BC, symSize: 0x4C }
-  - { offsetInCU: 0x75C, offset: 0x75C, size: 0x8, addend: 0x0, symName: _freeBlock, symObjAddr: 0xDA4, symBinAddr: 0x100003608, symSize: 0x3C }
-  - { offsetInCU: 0x780, offset: 0x780, size: 0x8, addend: 0x0, symName: _freeDisk, symObjAddr: 0xDE0, symBinAddr: 0x100003644, symSize: 0xD0 }
-  - { offsetInCU: 0x7C0, offset: 0x7C0, size: 0x8, addend: 0x0, symName: _freeLRUCache, symObjAddr: 0xEB0, symBinAddr: 0x100003714, symSize: 0x84 }
-  - { offsetInCU: 0x80E, offset: 0x80E, size: 0x8, addend: 0x0, symName: _createBlock, symObjAddr: 0xF34, symBinAddr: 0x100003798, symSize: 0x48 }
-  - { offsetInCU: 0x836, offset: 0x836, size: 0x8, addend: 0x0, symName: _initBlock, symObjAddr: 0xF7C, symBinAddr: 0x1000037E0, symSize: 0x18 }
-  - { offsetInCU: 0x85A, offset: 0x85A, size: 0x8, addend: 0x0, symName: _createNode, symObjAddr: 0xF94, symBinAddr: 0x1000037F8, symSize: 0x58 }
-  - { offsetInCU: 0x89E, offset: 0x89E, size: 0x8, addend: 0x0, symName: _createLinkedList, symObjAddr: 0xFEC, symBinAddr: 0x100003850, symSize: 0x38 }
-  - { offsetInCU: 0x8C6, offset: 0x8C6, size: 0x8, addend: 0x0, symName: _moveToEnd, symObjAddr: 0x1024, symBinAddr: 0x100003888, symSize: 0xF0 }
-  - { offsetInCU: 0x8F8, offset: 0x8F8, size: 0x8, addend: 0x0, symName: _loadDataIntoDisk, symObjAddr: 0x1114, symBinAddr: 0x100003978, symSize: 0x2A8 }
-  - { offsetInCU: 0x998, offset: 0x998, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x13BC, symBinAddr: 0x100003C20, symSize: 0x164 }
+  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: _createDisk, symObjAddr: 0x0, symBinAddr: 0x10000290C, symSize: 0x154 }
+  - { offsetInCU: 0x22A, offset: 0x22A, size: 0x8, addend: 0x0, symName: _createDisk, symObjAddr: 0x0, symBinAddr: 0x10000290C, symSize: 0x154 }
+  - { offsetInCU: 0x298, offset: 0x298, size: 0x8, addend: 0x0, symName: _createLRUCache, symObjAddr: 0x154, symBinAddr: 0x100002A60, symSize: 0xA4 }
+  - { offsetInCU: 0x2EA, offset: 0x2EA, size: 0x8, addend: 0x0, symName: _getFirstAvailableBlockId, symObjAddr: 0x1F8, symBinAddr: 0x100002B04, symSize: 0x9C }
+  - { offsetInCU: 0x32E, offset: 0x32E, size: 0x8, addend: 0x0, symName: _insertRecord, symObjAddr: 0x294, symBinAddr: 0x100002BA0, symSize: 0x22C }
+  - { offsetInCU: 0x381, offset: 0x381, size: 0x8, addend: 0x0, symName: _insertRecordIntoBlock, symObjAddr: 0x4C0, symBinAddr: 0x100002DCC, symSize: 0x114 }
+  - { offsetInCU: 0x3E2, offset: 0x3E2, size: 0x8, addend: 0x0, symName: _isBlockAvailable, symObjAddr: 0x5D4, symBinAddr: 0x100002EE0, symSize: 0x24 }
+  - { offsetInCU: 0x40A, offset: 0x40A, size: 0x8, addend: 0x0, symName: _writeRecordToStorage, symObjAddr: 0x5F8, symBinAddr: 0x100002F04, symSize: 0xE0 }
+  - { offsetInCU: 0x45D, offset: 0x45D, size: 0x8, addend: 0x0, symName: _getNumberBlockUsed, symObjAddr: 0x6D8, symBinAddr: 0x100002FE4, symSize: 0x8C }
+  - { offsetInCU: 0x4AF, offset: 0x4AF, size: 0x8, addend: 0x0, symName: _getBlockAccesses, symObjAddr: 0x764, symBinAddr: 0x100003070, symSize: 0x18 }
+  - { offsetInCU: 0x4D7, offset: 0x4D7, size: 0x8, addend: 0x0, symName: _getBlock, symObjAddr: 0x77C, symBinAddr: 0x100003088, symSize: 0xC4 }
+  - { offsetInCU: 0x51B, offset: 0x51B, size: 0x8, addend: 0x0, symName: _get, symObjAddr: 0x840, symBinAddr: 0x10000314C, symSize: 0xB4 }
+  - { offsetInCU: 0x55F, offset: 0x55F, size: 0x8, addend: 0x0, symName: _put, symObjAddr: 0x8F4, symBinAddr: 0x100003200, symSize: 0x18C }
+  - { offsetInCU: 0x5C9, offset: 0x5C9, size: 0x8, addend: 0x0, symName: _getBlockAccessReduced, symObjAddr: 0xA80, symBinAddr: 0x10000338C, symSize: 0x18 }
+  - { offsetInCU: 0x5F1, offset: 0x5F1, size: 0x8, addend: 0x0, symName: _deleteRecord, symObjAddr: 0xA98, symBinAddr: 0x1000033A4, symSize: 0x130 }
+  - { offsetInCU: 0x623, offset: 0x623, size: 0x8, addend: 0x0, symName: _runBruteForceSearch, symObjAddr: 0xBC8, symBinAddr: 0x1000034D4, symSize: 0x180 }
+  - { offsetInCU: 0x701, offset: 0x701, size: 0x8, addend: 0x0, symName: _getCurSize, symObjAddr: 0xD48, symBinAddr: 0x100003654, symSize: 0x18 }
+  - { offsetInCU: 0x729, offset: 0x729, size: 0x8, addend: 0x0, symName: _getRecordFromBlock, symObjAddr: 0xD60, symBinAddr: 0x10000366C, symSize: 0x4C }
+  - { offsetInCU: 0x75F, offset: 0x75F, size: 0x8, addend: 0x0, symName: _freeBlock, symObjAddr: 0xDAC, symBinAddr: 0x1000036B8, symSize: 0x3C }
+  - { offsetInCU: 0x783, offset: 0x783, size: 0x8, addend: 0x0, symName: _freeDisk, symObjAddr: 0xDE8, symBinAddr: 0x1000036F4, symSize: 0xD0 }
+  - { offsetInCU: 0x7C3, offset: 0x7C3, size: 0x8, addend: 0x0, symName: _freeLRUCache, symObjAddr: 0xEB8, symBinAddr: 0x1000037C4, symSize: 0x84 }
+  - { offsetInCU: 0x811, offset: 0x811, size: 0x8, addend: 0x0, symName: _createBlock, symObjAddr: 0xF3C, symBinAddr: 0x100003848, symSize: 0x48 }
+  - { offsetInCU: 0x839, offset: 0x839, size: 0x8, addend: 0x0, symName: _initBlock, symObjAddr: 0xF84, symBinAddr: 0x100003890, symSize: 0x18 }
+  - { offsetInCU: 0x85D, offset: 0x85D, size: 0x8, addend: 0x0, symName: _createNode, symObjAddr: 0xF9C, symBinAddr: 0x1000038A8, symSize: 0x58 }
+  - { offsetInCU: 0x8A1, offset: 0x8A1, size: 0x8, addend: 0x0, symName: _createLinkedList, symObjAddr: 0xFF4, symBinAddr: 0x100003900, symSize: 0x38 }
+  - { offsetInCU: 0x8C9, offset: 0x8C9, size: 0x8, addend: 0x0, symName: _moveToEnd, symObjAddr: 0x102C, symBinAddr: 0x100003938, symSize: 0xF0 }
+  - { offsetInCU: 0x8FB, offset: 0x8FB, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x111C, symBinAddr: 0x100003A28, symSize: 0x360 }
 ...

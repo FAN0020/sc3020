@@ -3,7 +3,7 @@
 #include <string.h>
 #include "block.h"
 
-#define MAX_RECORDS 7
+#define MAX_RECORDS (BLOCK_SIZE / RECORD_SIZE)
 #define BLOCK_SIZE 400
 #define RECORD_SIZE sizeof(struct Record)
 

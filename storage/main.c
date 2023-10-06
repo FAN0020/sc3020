@@ -110,7 +110,7 @@ int main() {
     int currentBlockId = 0; 
     struct Block* currentBlock = getBlock(disk, currentBlockId);
 
-    int lineCounter = 0;  // To track the line number
+     int lineCounter = 0;  // To track the line number
 
     while (fgets(line, sizeof(line), file)) {
         lineCounter++;
@@ -120,10 +120,16 @@ int main() {
 
         // Parse the line to create a record
         struct Record record;
-        sscanf(line, "%s %d %d %f %f %f %d %d %d", record.GAME_DATE_EST, &record.TEAM_ID_home, 
-               &record.PTS_home, &record.FG_PCT_home, &record.FT_PCT_home, 
-               &record.FG3_PCT_home, &record.AST_home, &record.REB_home, 
+
+        // Parse the date string and convert it to an integer
+        int day, month, year;
+        sscanf(line, "%d/%d/%d %s %d %f %f %f %d %d %s", &day, &month, &year, record.TEAM_ID_home,
+               &record.PTS_home, &record.FG_PCT_home, &record.FT_PCT_home,
+               &record.FG3_PCT_home, &record.AST_home, &record.REB_home,
                &record.HOME_TEAM_WINS);
+
+        // Convert the date to a single integer (e.g., 20220425)
+        record.GAME_DATE_EST = (year * 10000) + (month * 100) + day;
 
         // Step 3: Populate the Disk
         if (currentBlock->curRecords >= 7) {  // Assuming average of 7 records per block
@@ -135,6 +141,7 @@ int main() {
             printf("Block is full. This shouldn't happen.\n");
             return 1;
         }
+
 
         writeRecordToStorage(disk, record);
         

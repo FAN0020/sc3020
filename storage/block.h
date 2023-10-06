@@ -1,21 +1,23 @@
 #ifndef BLOCK_H
 #define BLOCK_H
 
+#include <stdbool.h>
+
 //#define MAX_RECORDS 7
 #define BLOCK_SIZE 400
 #define RECORD_SIZE sizeof(struct Record)
 #define MAX_RECORDS (BLOCK_SIZE / RECORD_SIZE)
 
 struct Record {
-    char GAME_DATE_EST[20];
-    int TEAM_ID_home;
+    int GAME_DATE_EST;
+    char TEAM_ID_home[10];
     int PTS_home;
     float FG_PCT_home;
     float FT_PCT_home;
     float FG3_PCT_home;
     int AST_home;
     int REB_home;
-    int HOME_TEAM_WINS; 
+    bool HOME_TEAM_WINS; 
 };
 
 struct Block{
