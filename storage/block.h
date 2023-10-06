@@ -8,9 +8,20 @@
 #define RECORD_SIZE sizeof(struct Record)
 #define MAX_RECORDS (BLOCK_SIZE / RECORD_SIZE)
 
+// struct Record {
+//     int GAME_DATE_EST;
+//     char TEAM_ID_home[10];
+//     int PTS_home;
+//     float FG_PCT_home;
+//     float FT_PCT_home;
+//     float FG3_PCT_home;
+//     int AST_home;
+//     int REB_home;
+//     bool HOME_TEAM_WINS; 
+// };
 struct Record {
     int GAME_DATE_EST;
-    char TEAM_ID_home[10];
+    int TEAM_ID_home;
     int PTS_home;
     float FG_PCT_home;
     float FT_PCT_home;

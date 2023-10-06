@@ -123,7 +123,7 @@ int main() {
 
         // Parse the date string and convert it to an integer
         int day, month, year;
-        sscanf(line, "%d/%d/%d %s %d %f %f %f %d %d %s", &day, &month, &year, record.TEAM_ID_home,
+        sscanf(line, "%d/%d/%d %d %d %f %f %f %d %d %s", &day, &month, &year, &record.TEAM_ID_home,
                &record.PTS_home, &record.FG_PCT_home, &record.FT_PCT_home,
                &record.FG3_PCT_home, &record.AST_home, &record.REB_home,
                &record.HOME_TEAM_WINS);
@@ -157,7 +157,7 @@ int main() {
     printf("\n----------------------EXPERIMENT 1-----------------------\n");
     printf("Total Number of Records Stored: %d\n", disk->numOfRecords);
     printf("Size of Each Record: %zu Bytes\n", sizeof(struct Record));
-    printf("Number of records stored in a block: %d\n", (currentBlockId == 0 ? currentBlock->curRecords : 7)); // Assuming average of 7 records/block
+    printf("Number of records stored in a block: %d\n", (currentBlockId == 0 ? currentBlock->curRecords : (int)(BLOCK_SIZE / RECORD_SIZE)));
     printf("Number of blocks for storing the data: %d\n", currentBlockId + 1); // +1 since it's 0-indexed
     
     // ... Later, when finished using the disk ...
