@@ -41,7 +41,7 @@ int main() {
     printf("Number of blocks for storing the data: %d\n", getNumberBlockUsed(disk));
     
     // free the memory
-    freeDisk(disk);
+    //freeDisk(disk);
 
 
     //EXPERIMENT 2
@@ -49,26 +49,32 @@ int main() {
     // • the number of nodes of the B+ tree;
     // • the number of levels of the B+ tree;
     // • the content of the root node (only the keys);
-    BTree *tree = createTree("FG_PCT_home");
+    char field[20] = "FG_PCT_home";
+    BTree *tree = createTree(field);
     InsertNode* insertInfo = (InsertNode*)malloc(sizeof(InsertNode));
+    printf("%s \n","info created");
 
     // for each data block 
     //     for each data record
     //         insertInfo->key = recordKey
     //         insertInfo->ptr = datablock pointer
     //         insertBTreeKey(tree,insertInfo);
+    int counter = 0; 
     for (int i = 0; i < disk->memdiskSize / disk->blkSize; i++) {
-    if (disk->filledBlocks[i] == 1) { // Ensure block has data before proceeding
-        struct Block* block = getBlock(disk, i);
-        int numberOfRecordsInBlock = getCurSize(block);
-        
-        for (int j = 0; j < numberOfRecordsInBlock; j++) {
-            struct Record rec = getRecordFromBlock(block, j);
-            insertInfo->key = rec.TEAM_ID_home; // Using TEAM_ID_home as the key
-            insertInfo->ptr = i; // The pointer in this context can be the block number. Adjust as needed.
-            insertBTreeKey(tree, insertInfo);
+        printf("i=%d \n",i);
+        if (disk->filledBlocks[i] == 1) { // Ensure block has data before proceeding
+            counter++; 
+            struct Block* block = getBlock(disk, i);
+            int numberOfRecordsInBlock = getCurSize(block);
+            
+            for (int j = 0; j < numberOfRecordsInBlock; j++) {
+                struct Record rec = getRecordFromBlock(block, j);
+                insertInfo->key = rec.TEAM_ID_home; // Using TEAM_ID_home as the key
+                insertInfo->ptr = i; // The pointer in this context can be the block number. Adjust as needed.
+                insertBTreeKey(tree, insertInfo);
+            }
         }
-        }
+        if(counter == getNumberBlockUsed(disk)) break;
     }
     printf("\n----------------------EXPERIMENT 2-----------------------\n");
     printf("Parameter n of the B+ tree: %d\n", N);
