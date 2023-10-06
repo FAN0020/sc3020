@@ -12,10 +12,13 @@
 typedef struct _btree{
     char field[20];
     double root;
+    BTPage* page;
 }BTree;
 
 // declare functions
 BTree* createTree(char field[20]);
-void insertBTreeKey(BTPage* page, BTree* tree,InsertNode* insertNode);
+void insertBTreeKey(BTree* tree,InsertNode* insertNode);
+void deleteBTreeKey(BTree* tree, UpdateNode* updateNode, DeleteNode* deleteInfo);
+void deleteBtree();
 
 #endif //BT_MGR_H

@@ -13,7 +13,7 @@
 */
 typedef struct _btpage{
     int types[P_REC_COUNT];
-    double pointers [P_REC_COUNT];
+    double pointers[P_REC_COUNT];
     struct _btpage *next; 
 } BTPage; 
 

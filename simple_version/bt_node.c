@@ -26,6 +26,88 @@ NonLeafNode* createNonleafNode(double ptr1, float key2, double ptr2){
 }
 
 /**
+ * function to insert a child node into a non-leaf node
+ * @param node parent node that non-leaf node child node is to be added to. 
+ * @param insertNode object containing the lowerbound and pointer of child node. 
+ * @return returns binary, 1 if further updates to tree is needed.
+*/
+int insertNonLeafNodeKey(NonLeafNode* node,InsertNode* insertNode){
+    int i, midKey=N/2;
+    float lowerboundKey=insertNode->key;
+    double lowerboundptr=insertNode->ptr;
+    NonLeafNode* newNode; 
+    // Node is full
+    if(node->keys[N-1] != -1){
+        // new key belongs to 2nd half of split. 
+        if(node->keys[midKey-1] < insertNode->key){
+            if(node->keys[midKey] > insertNode->key){
+                newNode = createNonleafNode(insertNode->ptr,node->keys[midKey],node->ptrs[midKey+1]);
+            }
+            else{
+                lowerboundKey = node->keys[midKey];
+                newNode = createNonleafNode(node->ptrs[midKey+1],insertNode->key,insertNode->ptr);
+            }
+            deleteNLNodeKey(node,node->keys[midKey]);
+        }
+        // new key belongs to first half of split.
+        else{
+            lowerboundKey = node->keys[midKey-1];
+            newNode = createNonleafNode(node->ptrs[midKey],node->keys[midKey],node->ptrs[midKey+1]);
+            deleteNLNodeKey(node, node->keys[midKey-1]);
+            deleteNLNodeKey(node, node->keys[midKey-1]);
+            // now got space for new node, add inside. 
+            insertNLNodeKey(node,insertNode->key, insertNode->ptr,0);
+        }
+        // shift remaining half to 2nd half
+        while(node->keys[midKey]!=-1){
+            insertNLNodeKey(newNode,node->keys[midKey], node->ptrs[midKey+1],0);
+            deleteNLNodeKey(node,node->keys[midKey]);
+        }
+        insertNode->key = lowerboundKey;
+        insertNode->ptr = (double)(uintptr_t)newNode;
+        return 1; 
+    }
+    // node has space
+    else{
+        // add key into node. 
+        insertNLNodeKey(node,insertNode->key, insertNode->ptr,0);
+        return 0;
+    }
+    
+}
+
+/**
+ * function to insert non-leaf node (used only for nodes with space)
+ * @param node parent node to insert child node into. 
+ * @param key loweer bound key of child node. 
+ * @param ptr pointer of the child node. 
+*/
+void insertNLNodeKey(NonLeafNode* node,float key, double ptr,int isLowerbound){
+    for(int i=N-1; i>0; i--){
+        if(node->keys[i-1] != -1){
+            if(node->keys[i-1]>key){
+                node->keys[i] = node->keys[i-1];
+                node->ptrs[i+1] = node->ptrs[i];
+            }
+            else if (node->keys[i-1] < key){
+                node->keys[i] = key;
+                node->ptrs[i+1] = ptr;
+                return; 
+            }
+        }
+    }
+    if(isLowerbound){
+        node->ptrs[1] = node->ptrs[0];
+        node->keys[0] = key;
+        node->ptrs[0] = ptr; 
+    }
+    else{
+        node->keys[0] = key;
+        node->ptrs[1] = ptr;
+    }
+}
+
+/**
  * function to search for key of the non-leaf node
  * @param node non-leaf node
  * @param key search key
@@ -58,88 +140,6 @@ double searchNonLeafNode(NonLeafNode* node, float key){
 }
 
 /**
- * function to insert a child node into a non-leaf node
- * @param node parent node that non-leaf node child node is to be added to. 
- * @param insertNode object containing the lowerbound and pointer of child node. 
- * @return returns binary, 1 if further updates to tree is needed.
-*/
-int insertNonLeafNodeKey(NonLeafNode* node,InsertNode* insertNode){
-    int i, midKey=N/2;
-    float lowerboundKey=insertNode->key;
-    double lowerboundptr=insertNode->ptr;
-    printf("lowerbound key = %.0f \n",lowerboundKey);
-    NonLeafNode* newNode; 
-    // Node is full
-    if(node->keys[N-1] != -1){
-        // new key belongs to 2nd half of split. 
-        if(node->keys[midKey-1] < insertNode->key){
-            if(node->keys[midKey] > insertNode->key){
-                newNode = createNonleafNode(insertNode->ptr,node->keys[midKey],node->ptrs[midKey+1]);
-            }
-            else{
-                lowerboundKey = node->keys[midKey];
-                newNode = createNonleafNode(node->ptrs[midKey+1],insertNode->key,insertNode->ptr);
-            }
-            deleteNLNodeKey(node,node->keys[midKey]);
-        }
-        // new key belongs to first half of split.
-        else{
-            lowerboundKey = node->keys[midKey-1];
-            printf("new lowerbound key = %.0f \n",lowerboundKey);
-            newNode = createNonleafNode(node->ptrs[midKey],node->keys[midKey],node->ptrs[midKey+1]);
-            deleteNLNodeKey(node, node->keys[midKey-1]);
-            deleteNLNodeKey(node, node->keys[midKey-1]);
-            // now got space for new node, add inside. 
-            insertNLNodeKey(node,insertNode->key, insertNode->ptr);
-        }
-        // shift remaining half to 2nd half
-        while(node->keys[midKey]!=-1){
-            insertNLNodeKey(newNode,node->keys[midKey], node->ptrs[midKey+1]);
-            deleteNLNodeKey(node,node->keys[midKey]);
-        }
-        insertNode->key = lowerboundKey;
-        insertNode->ptr = (double)(uintptr_t)newNode;
-        return 1; 
-    }
-    // node has space
-    else{
-        // add key into node. 
-        insertNLNodeKey(node,insertNode->key, insertNode->ptr);
-        return 0;
-    }
-    
-}
-
-/**
- * function to insert non-leaf node (used only for nodes with space)
- * @param node parent node to insert child node into. 
- * @param key loweer bound key of child node. 
- * @param ptr pointer of the child node. 
-*/
-void insertNLNodeKey(NonLeafNode* node,float key, double ptr){
-    for(int i=N-1; i>0; i--){
-        if(node->keys[i-1] != -1){
-            if(node->keys[i-1]>key){
-                node->keys[i] = node->keys[i-1];
-                node->ptrs[i+1] = node->ptrs[i];
-            }
-            else if (node->keys[i-1] < key){
-                node->keys[i] = key;
-                node->ptrs[i+1] = ptr;
-                return; 
-            }
-        }
-    }
-    node->keys[0] = key;
-    node->ptrs[1] = ptr;
-    for(int j=0;j<N;j++){
-        printf("%.0f ",node->ptrs[j]);
-        printf("%.0f ",node->keys[j]);
-    }
-    printf("%.0f \n",node->ptrs[N]);
-}
-
-/**
  * function to delete a key/child node from a non-full non-leaf node
  * @param node parent node that a child node is to be deleted from. 
  * @param delKey pointer to the node to be deleted.
@@ -148,7 +148,9 @@ void insertNLNodeKey(NonLeafNode* node,float key, double ptr){
 int deleteNLNodeKey(NonLeafNode* node, float delKey){
     int i = searchNonLeafNodeKey(node,delKey);
     for(i; i<N; i++){
-        node->keys[i-1] = node->keys[i];
+        if(i!=0){
+            node->keys[i-1] = node->keys[i];
+        }
         node->ptrs[i] = node->ptrs[i+1];
         if(node->keys[i-1] == -1){
             break; 
@@ -156,13 +158,6 @@ int deleteNLNodeKey(NonLeafNode* node, float delKey){
     }
     node->keys[N-1] = -1; // in case leaf was previously full, remove last key
     node->ptrs[N] = -1;
-
-    
-    for(int j=0;j<N;j++){
-        printf("%.0f ",node->ptrs[j]);
-        printf("%.0f ",node->keys[j]);
-    }
-    printf("%.0f \n",node->ptrs[N]);
 
     if(i < N/2) return 1; 
     return 0;
@@ -173,15 +168,93 @@ int deleteNLNodeKey(NonLeafNode* node, float delKey){
  * @param node current parent node. 
  * @param deleteNode information of nodes to be deleted/updated.
 */
-int deleteNonLeafNodeKey(NonLeafNode* node, DeleteNode* deleteNode){
+int deleteNonLeafNodeKey(BTPage *page, double root,UpdateNode* updateInfo ,DeleteNode* deleteNode){
     // delete key first.
-    deleteNode->key = deleteNode->oldKey;
-    int isInvalid = deleteNLNodeKey(node,deleteNode->key);
-    {
+    int toUpdate = 0, isInvalid, key;
+    // delete key and update tree keys. 
+    NonLeafNode *cNode = (NonLeafNode*)(uintptr_t)(updateInfo->cNode);
+    key = retrieveNonLeafLowerboundKey(page,updateInfo->cNode); // get old key.
+    isInvalid = deleteNLNodeKey(cNode,deleteNode->key);
+    UpdateLowerboundKeys(root, key,retrieveNonLeafLowerboundKey(page,updateInfo->cNode));
 
-    }
+    // balance. 
+    if(isInvalid &  updateInfo->cNode != root){
+        NonLeafNode* lNode, *rNode, *mergeLeft, *mergeRight; 
+        int toNext = 1; // binary to indicate to move to next case.
+        // not enough keys, requires merging. 
+        int i, midKey = N/2;
+        // Check left first. 
+        if (updateInfo->lNode != -1){
+            lNode = (NonLeafNode*)(uintptr_t)(updateInfo->lNode);
+            for(i=N-1;i>=0;i--){
+                if(lNode->keys[i] != -1){break;} 
+            }
+            if(i>=midKey){
+                // take from left node.
+                key = retrieveNonLeafLowerboundKey(page,updateInfo->cNode);
+                insertNLNodeKey(cNode,key,lNode->ptrs[i+1],1);
+                deleteNLNodeKey(lNode,lNode->keys[i]);
+                UpdateLowerboundKeys(root, key,retrieveNonLeafLowerboundKey(page,updateInfo->cNode));
+                toNext=0; 
+            }
 
+        }
+        if(toNext & updateInfo->rNode != -1){
+            rNode = (NonLeafNode*)(uintptr_t)(updateInfo->rNode);
+            // check right node. 
+            for(i=N-1;i>=0;i--){
+                if(rNode->keys[i] != -1)break;
+            }
+            if(i>=midKey){
+                // take from right node. 
+                key = retrieveNonLeafLowerboundKey(page,updateInfo->rNode); 
+                insertNLNodeKey(cNode,key,rNode->ptrs[0],0);
+                deleteNLNodeKey(rNode,key);
+                UpdateLowerboundKeys(root,key,retrieveNonLeafLowerboundKey(page,updateInfo->rNode));
+                toNext = 0; 
+            }
+        }
+        // merge 
+        if(toNext){
+            // merge with left
+            if(updateInfo->lNode != -1){
+                mergeLeft = lNode;
+                mergeRight = cNode; 
+            }
+            // merge with right.
+            else {
+                mergeLeft = cNode;
+                mergeRight = rNode;
+            }
+            // merge node. 
+            deleteNode->key = retrieveNonLeafLowerboundKey(page,(double)(uintptr_t)mergeRight);
+            deleteNode->ptr = (double)(uintptr_t)mergeRight;
+            while(mergeRight->keys[0] != -1){
+                insertNLNodeKey(mergeLeft,mergeRight->keys[0],mergeRight->ptrs[1],0);
+                deleteNLNodeKey(mergeRight,mergeRight->keys[0]);
+            }
+            insertNLNodeKey(mergeLeft,deleteNode->key,mergeRight->ptrs[0],0);
+            // deletion of parent node required. 
+            toUpdate = 1; 
+        } 
+        
+    } 
+    return(toUpdate);
+    
 }
+
+/**
+ * Function to delete non-leaf node.
+ * @param node non-leaf node to be deleted.
+ * @return pointer of the deleted node. 
+*/
+double deleteNonLeafNode(NonLeafNode* node){
+    double ptr = (double)(uintptr_t)node; 
+    free(node); 
+    return ptr; 
+}
+
+
 
 /** 
  * A function to find the lowerbound key of the nodes. 
@@ -234,7 +307,6 @@ int insertLeafNodeKey(LeafNode* node,InsertNode* insertNode){
     // Node is full
     if(node->keys[N-1] != -1){
         newNode = createLeafNode(node->keys[midKey],node->ptrs[midKey]);
-        printf("%.0f \n",node->keys[midKey]);
         while(node->keys[midKey]!=-1){
             insertLNodeKey(newNode,node->keys[midKey],node->ptrs[midKey]);
             deleteLNodeKey(node,node->keys[midKey]);
@@ -251,7 +323,6 @@ int insertLeafNodeKey(LeafNode* node,InsertNode* insertNode){
             insertLNodeKey(node,insertNode->key,insertNode->ptr);
         }
         insertNode->key = newNode->keys[0];
-        printf("split node key %0.f \n",insertNode->key);
         insertNode->ptr = (double)(uintptr_t)newNode;
         newNode->next = node->next; 
         node->next = newNode;
@@ -340,13 +411,8 @@ int deleteLNodeKey(LeafNode* node, float delKey){
     }
     node->keys[N-1] = -1; // in case leaf was previously full, remove last key
     node->ptrs[N-1] = -1; 
-    // for(int j=0;j<N;j++){
-    //     printf("%.0f ",node->ptrs[j]);
-    //     printf("%.0f ",node->keys[j]);
-    // }
-    // printf("%.0f \n",node->next);
 
-    if(i < (N+1)/2) return 1; 
+    if(i <= (N+1)/2) return 1; 
     return 0;
 }
 
@@ -356,76 +422,80 @@ int deleteLNodeKey(LeafNode* node, float delKey){
  * @param deleteNode information of nodes to be deleted/updated.
  * @returns returns binary 1 if updates are to be made to parent nodes. 
 */
-int deleteLeafNodeKey(LeafNode* node,double lNode,double rNode, DeleteNode* deleteNode){
+int deleteLeafNodeKey(double root, UpdateNode* updateInfo, DeleteNode* deleteNode){
     // delete key first.
-    deleteNode->oldKey = node->keys[0];
-    int isInvalid = deleteLNodeKey(node,deleteNode->key);
-    if(isInvalid){
-        LeafNode* leftNode, *rightNode, *mergeNode; 
+    int toUpdate = 0, isInvalid, key;
+    // delete key and update tree keys. 
+    LeafNode *cNode = (LeafNode*)(uintptr_t)(updateInfo->cNode);
+    key = cNode->keys[0]; // get old key.
+    isInvalid = deleteLNodeKey(cNode,deleteNode->key);
+    //
+    UpdateLowerboundKeys(root, key,cNode->keys[0]);
+
+    // balance. 
+    if(isInvalid & updateInfo->cNode != root){
+        LeafNode* lNode, *rNode, *mergeLeft, *mergeRight; 
         int toNext = 1; // binary to indicate to move to next case.
         // not enough keys, requires merging. 
         int i, midKey = (N+1)/2;
         // Check left first. 
-        if (lNode!=-1){
-            leftNode = (LeafNode*)(uintptr_t)lNode; 
+        if (updateInfo->lNode!=-1){
+            lNode = (LeafNode*)(uintptr_t)(updateInfo->lNode); 
             for(i=N-1;i>=0;i--){
-                if(leftNode->keys[i] != -1)break;
+                if(lNode->keys[i] != -1) break;
             }
             if(i>=midKey){
-                // take from left node. 
-                insertLNodeKey(node,leftNode->keys[i],leftNode->ptrs[i]);
-                deleteLNodeKey(leftNode,leftNode->keys[i]);
-                deleteNode->newKey = node->keys[0];
+                // take from left node.
+                key = cNode->keys[0]; 
+                insertLNodeKey(cNode,lNode->keys[i],lNode->ptrs[i]);
+                deleteLNodeKey(lNode,lNode->keys[i]);
+                UpdateLowerboundKeys(root, key,cNode->keys[0]);
                 toNext=0; 
             }
 
         }
-        if(toNext & rNode != -1){
-            rightNode = (LeafNode*)(uintptr_t)lNode; 
+        if(toNext & updateInfo->rNode != -1){
+            rNode = cNode->next;
             // check right node. 
             for(i=N-1;i>=0;i--){
-                if(node->next->keys[i] != -1)break;
+                if(rNode->keys[i] != -1)break;
             }
             if(i>=midKey){
                 // take from right node. 
-                deleteNode->oldKey = node->next->keys[0];
-                insertLNodeKey(node,node->next->keys[i],node->next->ptrs[i]);
-                deleteLNodeKey(node->next,node->next->keys[i]);
-                deleteNode->newKey = node->next->keys[0];
+                key = rNode->keys[0]; 
+                insertLNodeKey(cNode,rNode->keys[0],rNode->ptrs[0]);
+                deleteLNodeKey(rNode,rNode->keys[0]);
+                UpdateLowerboundKeys(root,key,rNode->keys[0]);
                 toNext = 0; 
             }
         }
+        // merge 
         if(toNext){
-            deleteNode->key = deleteNode->oldKey;
-            if(lNode != -1){
-                mergeNode = leftNode;
-                deleteNode->oldKey = -1;
-                deleteNode->newKey = -1;
+            // merge with left
+            if(updateInfo->lNode != -1){
+                mergeLeft = lNode;
+                mergeRight = cNode; 
             }
+            // merge with right.
             else {
-                mergeNode = rightNode;
-                deleteNode->oldKey = rightNode->keys[0];
-                deleteNode->newKey = node->keys[0];
+                mergeLeft = cNode;
+                mergeRight = rNode;
             }
             // merge node. 
-            while(node->keys[0] != 1){
-                insertLNodeKey(mergeNode,node->keys[0],node->ptrs[0]);
-                deleteLNodeKey(node,node->keys[0]);
+            deleteNode->key = mergeRight->keys[0];
+            deleteNode->ptr = (double)(uintptr_t)mergeRight;
+            while(1){
+                if(mergeRight->keys[0] == -1) break; 
+                insertLNodeKey(mergeLeft,mergeRight->keys[0],mergeRight->ptrs[0]);
+                deleteLNodeKey(mergeRight,mergeRight->keys[0]);
             }
-            deleteNode->ptr = deleteLeafNode(node);
-        }
-        return 1; 
+            mergeLeft->next = mergeRight->next;
+
+            // deletion of parent node required. 
+            toUpdate = 1; 
+        } 
     } 
-    else{
-        // update key if necessary.
-        // lowerbound of node has been changed.
-        if(deleteNode->oldKey != node->keys[0]){
-            deleteNode->newKey = node->keys[0];
-            return 1;
-        }
-        // no updates needed.
-        return 0;
-    }
+    return(toUpdate);
     
 }
 
@@ -582,12 +652,10 @@ int insertKey(BTPage *page, double nodePtr,InsertNode* insertNode){
     int nodeType = searchPageRecord(page, nodePtr);
     // non-leaf node
     if(nodeType == 1){
-        printf("%s %.0f %.0f \n","NonLeaf",insertNode->key, insertNode->ptr);
         NonLeafNode *nlNode = (NonLeafNode*)(uintptr_t)nodePtr; 
         // go deeper into the tree
         childPtr = searchNonLeafNode(nlNode,insertNode->key); 
         toUpdate = insertKey(page, childPtr, insertNode);
-        printf("non-leaf inserting key = %.0f \n",insertNode->key);
         // update the current node.
         if(toUpdate){
             toUpdate = insertNonLeafNodeKey(nlNode,insertNode); 
@@ -599,14 +667,12 @@ int insertKey(BTPage *page, double nodePtr,InsertNode* insertNode){
         }
     }
     else if(nodeType ==2){
-        printf("%s %.0f %.0f \n","Leaf",insertNode->key, insertNode->ptr);;
         LeafNode *lNode = (LeafNode*)(uintptr_t)nodePtr; 
         // go deeper into the tree
         childPtr = searchLeafNode(lNode,insertNode->key); 
         index = searchLeafNodeKey(lNode,insertNode->key);
         // update the current node.
         if(index == -1){
-            printf("%s \n","inserting node...");
             toUpdate = insertLeafNodeKey(lNode,insertNode); 
             // requires parent node to be updated as new node was created.
             if(toUpdate){
@@ -622,7 +688,6 @@ int insertKey(BTPage *page, double nodePtr,InsertNode* insertNode){
         }
     }
     else if(nodeType ==3){
-        printf("%s %.0f %.0f \n","Overflow",insertNode->key, insertNode->ptr);
         OverflowNode *oNode = (OverflowNode*)(uintptr_t)nodePtr; 
         toUpdate = insertOverflowRecord(oNode,insertNode);
         // new node created
@@ -632,7 +697,6 @@ int insertKey(BTPage *page, double nodePtr,InsertNode* insertNode){
         }
     }
     else{
-        printf("%s %.0f %.0f \n","empty",insertNode->key,insertNode->ptr);
         // if empty pointer
         if(nodePtr==-1){
             // create new leaf node with record.
@@ -662,55 +726,50 @@ int deleteKey(BTPage *page,double root, double nodePtr,DeleteNode* deleteNode, U
     int nodeType = searchPageRecord(page, nodePtr);
     // non-leaf node
     if(nodeType == 1){
-        printf("%s %.0f %.0f \n","NonLeaf",deleteNode->key, deleteNode->ptr);
         NonLeafNode *nlNode = (NonLeafNode*)(uintptr_t)nodePtr; 
         index = searchNonLeafNodeKey(nlNode,deleteNode->key);
         toUpdate = deleteKey(page,root,nlNode->ptrs[index],deleteNode,nodeInfo);
         if(toUpdate){
-            // update key
-            //int
-            // deleteKey
-            // getNodes(page, root, deleteNode->key,nodeInfo);
-            // int toUpdate = deleteNonLeafNodeKey(); // EDITTTTTTTTTTTTTTT
+            //deletekey
+            getNodes(page, root,deleteNode->key,deleteNode->ptr,nodeInfo);
+            toUpdate = deleteNonLeafNodeKey(page,root,nodeInfo,deleteNode);
             if(toUpdate){
+                // free up node
+                deleteNonLeafNode((NonLeafNode*)(uintptr_t)(deleteNode->ptr));
+                // delete page record.
                 deletePageRecord(page, deleteNode->ptr);
             }
         }
-
-        
     }
     else if(nodeType ==2){
-        printf("%s %.0f %.0f \n","Leaf",deleteNode->key, deleteNode->ptr);
         LeafNode *lNode = (LeafNode*)(uintptr_t)nodePtr; 
         // go deeper into the tree 
         index = searchLeafNodeKey(lNode,deleteNode->key);
         toUpdate = deleteKey(page,root,lNode->ptrs[index],deleteNode,nodeInfo);
         if(toUpdate){
-            // datablock removed, no pointers, delete key. 
-            if(deleteNode->ptr == -1){
-                nodeInfo->cNode = (double)(uintptr_t)lNode; 
-                // get the left and right node.
-                getNodes(page, root,deleteNode->key,nodeInfo);
-                toUpdate = deleteLeafNodeKey(lNode, nodeInfo->lNode,nodeInfo->rNode,deleteNode);
+            // updating ptr from overflow node to only 1 datablock.
+            if(deleteNode->ptr != -2){
+                lNode->ptrs[index] = deleteNode->ptr; 
+                toUpdate=0; 
+            }
+            else{
+                // update key if necessary. 
+                if(deleteNode->ptr == -2){
+                    lNode->ptrs[index] = -2; 
+                }
+                // delete key
+                getNodes(page, root,deleteNode->key,deleteNode->ptr,nodeInfo);
+                toUpdate = deleteLeafNodeKey(root, nodeInfo,deleteNode);
                 if(toUpdate){
-                    // update the lowerbound of keys if necessary.
-                    if(deleteNode->oldKey != deleteNode->newKey){
-                        UpdateLowerboundKeys(page, root,deleteNode->oldKey, deleteNode->newKey);
-                    }
+                    // free up node
+                    deleteLeafNode((LeafNode*)(uintptr_t)(deleteNode->ptr));
                     // delete page record.
                     deletePageRecord(page, deleteNode->ptr);
                 }
             }
-            // update from overflow node to single data block.
-            else{
-                lNode->ptrs[index] = deleteNode->ptr;
-                toUpdate = 0; 
-            }
         }
-        
     }
     else if(nodeType ==3){
-        printf("%s %.0f %.0f \n","Overflow",deleteNode->key, deleteNode->ptr);
         OverflowNode *oNode = (OverflowNode*)(uintptr_t)nodePtr; 
         toUpdate = deleteOverflowRecord(oNode,deleteNode);
         // new node created
@@ -718,20 +777,17 @@ int deleteKey(BTPage *page,double root, double nodePtr,DeleteNode* deleteNode, U
             // delete empty record.
             deletePageRecord(page, deleteNode->ptr);
             if(deleteNode->ptr != (double)(uintptr_t)oNode){
-                toUpdate = 1;
-            }
-            else{
                 toUpdate = 0;
             }
         }
     }
     else{
-        // datablock pointer. 
-        deleteNode->ptr = -1; 
+        deleteNode->ptr = -2; 
         toUpdate = 1;
     }
     return toUpdate; 
 }
+
 
 /**
  * A function to update the current node, the left node and the right node. 
@@ -740,44 +796,57 @@ int deleteKey(BTPage *page,double root, double nodePtr,DeleteNode* deleteNode, U
  * @param key key we're searching for.
  * @param nodeInfo object containing the node we're searching for and it's neighbouring nodes.
 */
-int getNodes(BTPage* page, double node,float key,UpdateNode* nodeInfo){
+int getNodes(BTPage* page, double node,float key,float ptr, UpdateNode* nodeInfo){
     int depth = 0;
     double currNode;
-    NonLeafNode* nlNode = (NonLeafNode*)(uintptr_t)node; 
-    int index = searchNonLeafNodeKey(nlNode,key);
-    if(nlNode->ptrs[index] == nodeInfo->cNode){
-        if(index>0) nodeInfo->lNode = nlNode->ptrs[index-1];
-        if(index<N) nodeInfo->rNode = nlNode->ptrs[index+1];
-        return 1; 
+    if(searchPageRecord(page, node) == 2){
+        LeafNode *leafNode = (LeafNode*)(uintptr_t)node; 
+        int index = searchLeafNodeKey(leafNode,key);
+        // found cNode in nlNode
+        if(leafNode->ptrs[index] == ptr){
+            nodeInfo->cNode = node; 
+            nodeInfo->lNode = -1; 
+            nodeInfo->rNode = -1; 
+            return 1; 
+        }
     }
     else{
-        depth = getNodes(page, nlNode->ptrs[index],key,nodeInfo);
-        if(nodeInfo->lNode == -1){
-            if(index>0){
-                nlNode=(NonLeafNode*)(uintptr_t)(nlNode->ptrs[index-1]);
-                currNode = nlNode->ptrs[N];
-                for(int i = 1; i<depth;i++ ){
-                    nlNode=(NonLeafNode*)(uintptr_t)currNode;
-                    currNode = nlNode->ptrs[N];
-                }
-            }
-            nodeInfo->lNode = currNode;
+        NonLeafNode *lNode, *rNode, *nlNode = (NonLeafNode*)(uintptr_t)node; 
+        int index = searchNonLeafNodeKey(nlNode,key);
+        // found cNode in nlNode
+        if(nlNode->ptrs[index] == ptr){
+            nodeInfo->cNode = node; 
+            nodeInfo->lNode = -1; 
+            nodeInfo->rNode = -1; 
+            return 1; 
         }
-        if(nodeInfo->rNode == -1){
+        else{
+            depth = getNodes(page, nlNode->ptrs[index],key,ptr,nodeInfo);
+            if(nodeInfo->lNode == -1){
+                if(index>0){
+                    currNode = nlNode->ptrs[index-1];
+                    for(int i = 1; i<depth;i++ ){
+                        lNode=(NonLeafNode*)(uintptr_t)currNode;
+                        currNode = lNode->ptrs[N];
+                    }
+                    nodeInfo->lNode = currNode;
+                }
+                
+            }
             if(nodeInfo->rNode == -1){
-            if(index<N){
-                nlNode=(NonLeafNode*)(uintptr_t)(nlNode->ptrs[index+1]);
-                currNode = nlNode->ptrs[0];
-                for(int i = 1; i<depth;i++ ){
-                    nlNode=(NonLeafNode*)(uintptr_t)currNode;
-                    currNode = nlNode->ptrs[0];
+                if(index<N){
+                    currNode = nlNode->ptrs[index+1];
+                    for(int i = 1; i<depth;i++ ){
+                        rNode=(NonLeafNode*)(uintptr_t)currNode;
+                        currNode = rNode->ptrs[0];
+                    }
+                    nodeInfo->rNode = currNode;
                 }
             }
-            nodeInfo->rNode = currNode;
+            return depth+1; 
         }
-        }
-        return depth+1; 
     }
+    
 }
 
 
@@ -788,14 +857,16 @@ int getNodes(BTPage* page, double node,float key,UpdateNode* nodeInfo){
  * @param oldKey the old lowerbound key of the leaf node 
  * @param newKey the new lowerbound key of the leaf node
 */
-void UpdateLowerboundKeys(BTPage *page, double node, float oldKey, float newKey){
-    NonLeafNode* nlNode = (NonLeafNode*)(uintptr_t)node;
-    int index = searchNonLeafNodeKey(nlNode,oldKey); 
-    if(index>0 & nlNode->keys[index-1]==oldKey){
-        nlNode->keys[index-1]=newKey;
-    }
-    else{
-        UpdateLowerboundKeys(page, nlNode->ptrs[index],oldKey,newKey);
+void UpdateLowerboundKeys(double node, float oldKey, float newKey){
+    if(oldKey != newKey){
+        NonLeafNode* nlNode = (NonLeafNode*)(uintptr_t)node;
+        int index = searchNonLeafNodeKey(nlNode,oldKey); 
+        if(index>0 & nlNode->keys[index-1]==oldKey){
+            nlNode->keys[index-1]=newKey;
+        }
+        else{
+            UpdateLowerboundKeys(nlNode->ptrs[index],oldKey,newKey);
+        }
     }
 } 
 

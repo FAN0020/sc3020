@@ -14,6 +14,7 @@ BTPage* createPage(){
     // set all types to 0, signify empty slot, there is no node.
     for(i=0;i<P_REC_COUNT;i++){
         page->types[i]=0;
+        page->pointers[i] = -1; 
     }
     page->next = NULL; 
     return page; 
@@ -107,7 +108,7 @@ int searchPageRecord(BTPage *page, double pointer){
     }
     for(int i = 0; i<P_REC_COUNT;i++){
         // node found, return node type
-        if(page->pointers[i]==pointer & page->types!=0){
+        if(page->pointers[i]==pointer & page->types[i]!=0){
             return page->types[i];
         }
     }

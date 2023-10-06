@@ -57,6 +57,7 @@ typedef struct _deletenode{
 }DeleteNode; 
 
 typedef struct _updateNode{
+    double root; 
     double lNode; 
     double cNode;
     double rNode; 
@@ -65,12 +66,12 @@ typedef struct _updateNode{
 // declare functions
 NonLeafNode* createNonleafNode(double ptr1, float key2, double ptr2);
 int insertNonLeafNodeKey(NonLeafNode* node, InsertNode* insertNode);
-void insertNLNodeKey(NonLeafNode* node,float key, double ptr);
+void insertNLNodeKey(NonLeafNode* node,float key, double ptr,int isLowerbound);
 int searchNonLeafNodeKey(NonLeafNode* node, float key);
 double searchNonLeafNode(NonLeafNode* node, float key);
 int deleteNLNodeKey(NonLeafNode* node, float key);
-int deleteNonLeafNodeKey(NonLeafNode* node, DeleteNode* deleteNode);
-int deleteNonleafNode(NonLeafNode* node, DeleteNode* deleteNode);
+int deleteNonLeafNodeKey(BTPage *page, double root,UpdateNode* updateInfo ,DeleteNode* deleteNode);
+double deleteNonLeafNode(NonLeafNode* node);
 float retrieveNonLeafLowerboundKey(BTPage* page, double node);
 
 LeafNode* createLeafNode(float key, double ptr);
@@ -79,18 +80,19 @@ void insertLNodeKey(LeafNode* node,float key, double ptr);
 int searchLeafNodeKey(LeafNode* node, float key);
 double searchLeafNode(LeafNode* node, float key);
 int deleteLNodeKey(LeafNode* node, float key);
-int deleteLeafNodeKey(LeafNode* node,double lNode,double rNode, DeleteNode* deleteNode);
+int deleteLeafNodeKey(double root, UpdateNode* updateInfo, DeleteNode* deleteNode);
 double deleteLeafNode(LeafNode* node);
 
 OverflowNode* createOverflowNode(double dataPtr);
 int insertOverflowRecord(OverflowNode* node, InsertNode* insertNode);
-int deleteOverflowRecord(OverflowNode* node, DeleteNode* deleteNode);
 OverflowNode* lastOverflowNode(OverflowNode *node);
 double CheckOverflowNode(OverflowNode* node);
+int deleteOverflowRecord(OverflowNode* node, DeleteNode* deleteNode);
 
 int insertKey(BTPage *page, double nodePtr, InsertNode* insertNode);
 int deleteKey(BTPage *page,double root, double nodePtr,DeleteNode* deleteNode, UpdateNode* nodeInfo);
-int getNodes(BTPage* page, double node,float key,UpdateNode* nodeInfo);
+int getNodes(BTPage* page, double node,float key,float ptr,UpdateNode* nodeInfo);
+void UpdateLowerboundKeys(double node, float oldKey, float newKey);
 
 
 

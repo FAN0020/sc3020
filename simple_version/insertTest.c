@@ -14,9 +14,8 @@
 // functions 
 int main(){
     char field[20] = "test";
-    BTPage* page = createPage();
     BTree* testTree = createTree(field);
-    Node* insertNode = (Node*) malloc(sizeof(Node));
+    InsertNode* insertNode = (InsertNode*) malloc(sizeof(InsertNode));
     NonLeafNode* root;
 
     int value = 36*16+1;
@@ -24,33 +23,37 @@ int main(){
         printf("i = %d \n",i);
         insertNode->key = value-i+1;
         insertNode->ptr = value-i+1; 
-        insertBTreeKey(page,testTree,insertNode);
-        if(searchPageRecord(page,testTree->root) == 2){
-            LeafNode *child = (LeafNode*)(uintptr_t)testTree->root;
-            for(int j=0;j<N;j++){
-                printf("%.0f ",child->ptrs[j]);
-                printf("%.0f ",child->keys[j]);
-            }
-            printf("%.0f \n",child->next);
-        }
-        else{
-            root = (NonLeafNode*) (uintptr_t) testTree->root;
-            for(int j=0;j<N;j++){
-                printf("%.0f ",root->ptrs[j]);
-                printf("%.0f ",root->keys[j]);
-            }
-            printf("%.0f \n",root->ptrs[N]);
-        }
+        insertBTreeKey(testTree,insertNode);
+        
     }
     
-    NonLeafNode *child1 = (NonLeafNode*) (uintptr_t) (root->ptrs[1]);
+    printf("%s \n","Print Tree:");
+    if(searchPageRecord(testTree->page,testTree->root) == 2){
+        LeafNode *child = (LeafNode*)(uintptr_t)testTree->root;
+        for(int j=0;j<N;j++){
+            printf("%.0f ",child->ptrs[j]);
+            printf("%.0f ",child->keys[j]);
+        }
+        printf("%.0f \n",child->next);
+    }
+    else{
+        root = (NonLeafNode*) (uintptr_t) testTree->root;
+        for(int j=0;j<N;j++){
+            printf("%.0f ",root->ptrs[j]);
+            printf("%.0f ",root->keys[j]);
+        }
+        printf("%.0f \n",root->ptrs[N]);
+    }
+
+
+    NonLeafNode *child1 = (NonLeafNode*) (uintptr_t) (root->ptrs[0]);
     for(int j=0;j<N;j++){
         printf("%.0f ",child1->ptrs[j]);
         printf("%.0f ",child1->keys[j]);
     }
     printf("%.0f \n",child1->ptrs[N]);
 
-    LeafNode *child = (LeafNode*)(uintptr_t) (child1->ptrs[0]);
+    LeafNode *child = (LeafNode*)(uintptr_t) (child1->ptrs[16]);
     for(int j=0;j<N;j++){
         printf("%.0f ",child->ptrs[j]);
         printf("%.0f ",child->keys[j]);

@@ -14,7 +14,6 @@
 // functions 
 int main(){
     char field[20] = "test";
-    BTPage* page = createPage();
     BTree* testTree = createTree(field);
     InsertNode* insertNode = (InsertNode*) malloc(sizeof(InsertNode));
     NonLeafNode* root;
@@ -25,8 +24,8 @@ int main(){
         printf("i = %d \n",i);
         insertNode->key = 3;
         insertNode->ptr = i; 
-        insertBTreeKey(page,testTree,insertNode);
-        if(searchPageRecord(page,testTree->root) == 2){
+        insertBTreeKey(testTree,insertNode);
+        if(searchPageRecord(testTree->page,testTree->root) == 2){
             child = (LeafNode*)(uintptr_t)testTree->root;
             for(int j=0;j<N;j++){
                 printf("%.0f ",child->ptrs[j]);

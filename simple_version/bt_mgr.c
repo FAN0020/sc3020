@@ -15,12 +15,13 @@ BTree* createTree(char field[20]){
     BTree *newTree = (BTree*)malloc(sizeof(BTree));
     strcpy(newTree->field,field);
     newTree->root = -1; // signifies no node created in tree yet.
+    newTree->page = createPage();
     return newTree;
 }
 
 
-void insertBTreeKey(BTPage* page,BTree* tree,InsertNode* insertNode){
-    int toUpdate = insertKey(page,tree->root,insertNode);
+void insertBTreeKey(BTree* tree,InsertNode* insertNode){
+    int toUpdate = insertKey(tree->page,tree->root,insertNode);
     if(toUpdate==1){
         // empty tree, make node the root. 
         if(tree->root == -1){
@@ -29,8 +30,17 @@ void insertBTreeKey(BTPage* page,BTree* tree,InsertNode* insertNode){
         // adding new root node.
         else{
             NonLeafNode* newRoot = createNonleafNode(tree->root,insertNode->key,insertNode->ptr);
-            insertPageRecord(page,(double)(uintptr_t)newRoot,1);
+            insertPageRecord(tree->page,(double)(uintptr_t)newRoot,1);
             tree->root = (double)(uintptr_t)newRoot;
         }
+    }
+}
+
+void deleteBTreeKey(BTree* tree, UpdateNode* updateNode, DeleteNode* deleteInfo){
+    // delete!
+    int toUpdate = deleteKey(tree->page, tree->root,tree->root, deleteInfo, updateNode); 
+    NonLeafNode* root = (NonLeafNode*)(uintptr_t)(tree->root);
+    if(root->keys[0] == -1){
+        tree->root = root->ptrs[0];
     }
 }
