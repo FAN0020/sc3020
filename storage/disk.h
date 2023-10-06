@@ -53,47 +53,6 @@ void deleteRecord(struct Block* block, int offset);
 int runBruteForceSearch(struct Disk* disk, int FG_PCT_homeValue, int FG_PCT_homeValueUpperRange);
 void freeDisk(struct Disk* disk);
 int loadDataIntoDisk(struct Disk* disk);
-
-
-// void load_data_to_disk(struct Disk* disk, const char* filename){
-//     FILE* file = fopen(filename, "r");
-//     if (!file) {
-//         printf("Failed to open file: %s\n", filename);
-//         return;
-//     }
-
-//     char line[256]; // Buffer for each line in the file.
-//     fgets(line, sizeof(line), file); // Skip the first line.
-
-//     struct Block* current_block = NULL;
-//     int block_index = 0;
-
-//     while (fgets(line, sizeof(line), file) != NULL) {
-//         if (!current_block || current_block->curRecords >= MAX_RECORDS) {
-//             // Start with a new block.
-//             current_block = disk->blocks[block_index++];
-//             initBlock(current_block);
-//         }
-
-//         struct Record record;
-
-//         sscanf(line, "%19s\t%d\t%d\t%f\t%f\t%f\t%d\t%d\t%d", 
-//             record.GAME_DATE_EST, 
-//             &record.TEAM_ID_home, 
-//             &record.PTS_home,
-//             &record.FG_PCT_home, 
-//             &record.FT_PCT_home,
-//             &record.FG3_PCT_home, 
-//             &record.AST_home, 
-//             &record.REB_home, 
-//             &record.HOME_TEAM_WINS
-//         );
-
-//         current_block->recordsList[current_block->curRecords] = record;
-//         current_block->curRecords++;
-//     }
-
-//     fclose(file);
-// };
+struct Disk* loadData(struct Disk* disk, const char* filename);
 
 #endif // DISK_STORAGE_H

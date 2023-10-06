@@ -2,26 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-// #include "block.h"
 #include "LRUCache.h"
-
-// struct Node {
-//     int key;
-//     struct Block* value;
-//     struct Node* next;
-//     struct Node* prev;
-// };
-
-// struct LinkedList {
-//     struct Node* head;
-//     struct Node* tail;
-// };
-
-// struct LRUCache {
-//     int capacity;
-//     struct LinkedList* list;
-//     struct Node** cacheMap;
-// };
 
 struct Node* createNode(int key, struct Block* value) {
     struct Node* node = (struct Node*)malloc(sizeof(struct Node));
@@ -120,41 +101,3 @@ void freeLRUCache(struct LRUCache* cache) {
     free(cache->cacheMap);
     free(cache);
 }
-
-/*int main() {
-    struct LRUCache* cache = createLRUCache(3);
-
-    struct Block block1;
-    block1.blockID = 1;
-
-    struct Block block2;
-    block2.blockID = 2;
-
-    struct Block block3;
-    block3.blockID = 3;
-
-    struct Block block4;
-    block4.blockID = 4;
-
-    put(cache, 1, block1);
-    put(cache, 2, block2);
-    put(cache, 3, block3);
-    put(cache, 4, block4); 
-
-    struct Block* result = get(cache, 1); 
-
-    if (result == NULL) {
-        printf("Block 1 is not in the cache.\n");
-    }
-
-    result = get(cache, 4);
-
-    if (result != NULL) {
-        printf("Block 4 is in the cache. Block ID: %d\n", result->blockID);
-    }
-
-    freeLRUCache(cache);
-
-    return 0;
-}
-*/

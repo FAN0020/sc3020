@@ -45,14 +45,3 @@ int getRecordSize() {
 void toString(const struct Record* record, char* result, int resultSize) {
     snprintf(result, resultSize, "Record Info: GAME_DATE_EST: %s, FG3_PCT_home: %f, FG_PCT_home %f", record->GAME_DATE_EST, record->FG3_PCT_home, record->FG_PCT_home);
 }
-
-/*int main() {
-    // Example
-    struct Record record = createRecord("ABC1234567", 8.5f, 1000);
-    char formattedString[128];
-    toString(&record, formattedString, sizeof(formattedString));
-    printf("%s\n", formattedString);
-
-    return 0;
-}
-*/
