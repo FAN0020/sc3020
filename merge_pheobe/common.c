@@ -13,6 +13,8 @@
 #include "block.c"
 #include "LRUCache.c"
 
+#include "common.h"
+
 #define LEAF_NODE_TYPE 2
 
 int countNodes(double nodePtr, BTPage *page) {

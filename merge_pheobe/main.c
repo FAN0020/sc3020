@@ -5,13 +5,12 @@
 #include "block.h"
 #include "LRUCache.h"
 #include "common.h"
-
 #include "b+tree/bt_page.h"
-#include "b+tree/bt_node.h"
-#include "b+tree/bt_mgr.h"
-#include "b+tree/bt_page.c"
-#include "b+tree/bt_node.c"
-#include "b+tree/bt_mgr.c"
+#include "../simple_version//bt_node.h"
+#include "../simple_version/bt_mgr.h"
+#include "../simple_version/bt_page.c"
+#include "../simple_version/bt_node.c"
+#include "../simple_version/bt_mgr.c"
 
 #include "disk.c"
 #include "block.c"
@@ -79,11 +78,11 @@ int main() {
     printf("\n----------------------EXPERIMENT 2-----------------------\n");
     printf("Parameter n of the B+ tree: %d\n", N);
     // Get number of nodes by traversing the tree
-    // int nodeCount = countNodes(tree->root, page);
-    // printf("Number of nodes of the B+ tree: %d\n", nodeCount);
+    int nodeCount = countNodes(tree->root, tree->page);
+    printf("Number of nodes of the B+ tree: %d\n", nodeCount);
     // // Get number of levels
-    // int levelCount = countLevels(tree->root, page);
-    // printf("Number of levels of the B+ tree: %d\n", levelCount);
+    int levelCount = countLevels(tree->root, tree->page);
+    printf("Number of levels of the B+ tree: %d\n", levelCount);
     // // Print content of the root node
     // printf("Keys in the root node: ");
     // if (tree->root != -1) {
@@ -93,6 +92,11 @@ int main() {
     //     }
     // }
     printf("\n");
-    
+
+    printf("\n----------------------EXPERIMENT 3-----------------------\n");
+    int search_counter = 0;
+
+
+
     return 0;
 }
