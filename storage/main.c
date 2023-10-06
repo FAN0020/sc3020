@@ -132,12 +132,12 @@ int main() {
         record.GAME_DATE_EST = (year * 10000) + (month * 100) + day;
 
         // Step 3: Populate the Disk
-        if (currentBlock->curRecords >= 7) {  // Assuming average of 7 records per block
+        if (currentBlock->curRecords >= (int)(MAX_RECORDS)) {  // Assuming average of 7 records per block
             currentBlockId++;
             currentBlock = getBlock(disk, currentBlockId);
         }
 
-        if (currentBlock->curRecords >= MAX_RECORDS) {
+        if (currentBlock->curRecords >= (int)(MAX_RECORDS)) {
             printf("Block is full. This shouldn't happen.\n");
             return 1;
         }
