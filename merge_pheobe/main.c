@@ -94,8 +94,9 @@ int main() {
     printf("\n");
 
     printf("\n----------------------EXPERIMENT 3-----------------------\n");
-    int search_counter = 0;
-
+    search_counter = 0;
+    double something = searchBTreeKey(tree, 0.5);
+    printf("%d", search_counter);
 
 
     return 0;

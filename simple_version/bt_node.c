@@ -878,7 +878,11 @@ void UpdateLowerboundKeys(double node, float oldKey, float newKey){
  * @param key the key we're searching for. 
  * @return returns the pointer to the datablock/overflow node. 
 */
+
+int search_counter = 0;
+
 double searchKey(BTPage *page, double node, float key){
+    (*(&search_counter))++;
     double result = 0;
     int nodeType, index;
     nodeType = searchPageRecord(page,node);
@@ -892,12 +896,7 @@ double searchKey(BTPage *page, double node, float key){
     else{
         LeafNode *lNode = (LeafNode*)(uintptr_t)node;
         index = searchLeafNodeKey(lNode, key);
-        if (index == -1) {// no such key found, return -1.
-            return index;
-        }
-        else{ // returns datablock/overflow node
-            return lNode->ptrs[index];
-        }
+        return lNode->ptrs[index];
     }
 }
 
