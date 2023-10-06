@@ -44,3 +44,52 @@ void deleteBTreeKey(BTree* tree, UpdateNode* updateNode, DeleteNode* deleteInfo)
         tree->root = root->ptrs[0];
     }
 }
+
+/**
+ * A function to delete the B+ Tree
+ * @param tree the tree to be deleted.
+*/
+void deleteBTree(BTree* tree){
+    // delete page.
+    BTPage *newPage, *page = tree->page;
+    int nodeType;
+    while(page != NULL){
+        newPage = page->next;
+        for(int i =0;i<P_REC_COUNT;i++){
+            nodeType = page->types[i];
+            if(nodeType == 1){
+                deleteNonLeafNode((NonLeafNode*)(uintptr_t)(page->pointers[i]));
+            }
+            else if(nodeType == 2){
+                deleteLeafNode((LeafNode*)(uintptr_t)(page->pointers[i]));
+            }
+            else if(nodeType == 3){
+                free((OverflowNode*)(uintptr_t)(page->pointers[i]));
+            }
+        }
+        deletePage(page);
+        page = newPage;
+    }
+    // delete tree.
+    free(tree);
+}
+
+/**
+ * A function to search key and return datablock/overflow node containing location of records.
+ * @param tree object containing details of the tree
+ * @param key key we're searching for in the tree.
+ * @return returns the datablock/overflow node containing the records. (returns -1 if key is not found.)
+*/
+double searchBTreeKey(BTree *tree, float key){
+    return searchKey(tree->page,tree->root,key);
+}
+
+/**
+ * A function to search key and return leaf node containing start of the range.
+ * @param tree object containing details of the tree
+ * @param key starting range key we're searching for in the tree.
+ * @return returns the leaf node containing start of the range.
+*/
+double searchBTreeRangeKey(BTree *tree, float key){
+    return searchRangeKey(tree->page,tree->root,key);
+}

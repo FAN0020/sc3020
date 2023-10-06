@@ -870,6 +870,60 @@ void UpdateLowerboundKeys(double node, float oldKey, float newKey){
     }
 } 
 
+/**
+ * A function to search for the key and return the datablock/overflow block.
+ * It is used for finding records of a single key.
+ * @param page object containing the list of nodes and their types. 
+ * @param node current node we're looking through. 
+ * @param key the key we're searching for. 
+ * @return returns the pointer to the datablock/overflow node. 
+*/
+double searchKey(BTPage *page, double node, float key){
+    double result = 0;
+    int nodeType, index;
+    nodeType = searchPageRecord(page,node);
+    // Non Leaf node
+    if (nodeType == 1){
+        NonLeafNode *nlNode = (NonLeafNode*)(uintptr_t)node;
+        index = searchNonLeafNodeKey(nlNode, key);
+        return searchKey(page, nlNode->ptrs[index],key);
+    }
+    // leaf node
+    else{
+        LeafNode *lNode = (LeafNode*)(uintptr_t)node;
+        index = searchLeafNodeKey(lNode, key);
+        if (index == -1) {// no such key found, return -1.
+            return index;
+        }
+        else{ // returns datablock/overflow node
+            return lNode->ptrs[index];
+        }
+    }
+}
+
+/**
+ * A function to search for range keys and returns the leaf node containing the start of the range.
+ * It is used for finding records of a single key.
+ * @param page object containing the list of nodes and their types. 
+ * @param node current node we're looking through. 
+ * @param key the key we're searching for. 
+ * @return returns the leafnode containing the start of the range. 
+*/
+double searchRangeKey(BTPage *page, double node, float key){
+    double result = 0;
+    int nodeType, index;
+    nodeType = searchPageRecord(page,node);
+    // Non Leaf node
+    if (nodeType == 1){
+        NonLeafNode *nlNode = (NonLeafNode*)(uintptr_t)node;
+        index = searchNonLeafNodeKey(nlNode, key);
+        return searchKey(page, nlNode->ptrs[index],key);
+    }
+    // leaf node
+    else{
+        return node;
+    }
+}
 
 
 

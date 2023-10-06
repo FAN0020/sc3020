@@ -1,7 +1,6 @@
 #ifndef BT_NODE_H
 #define BT_NODE_H
 
-#include "storage.h"
 #include "bt_page.h"
 #include <string.h>
 
@@ -94,6 +93,8 @@ int deleteKey(BTPage *page,double root, double nodePtr,DeleteNode* deleteNode, U
 int getNodes(BTPage* page, double node,float key,float ptr,UpdateNode* nodeInfo);
 void UpdateLowerboundKeys(double node, float oldKey, float newKey);
 
+double searchKey(BTPage *page, double node, float key);
+double searchRangeKey(BTPage *page, double node, float key);
 
 
 

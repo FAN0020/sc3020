@@ -83,20 +83,20 @@ int main(){
         }
         printf("%.0f \n",root->ptrs[N]);
     }
-    int k;
-    for(k=N-1;k>=0;k--){
-        if (root->keys[k] != 1) break;
-    }
+    // int k;
+    // for(k=N-1;k>=0;k--){
+    //     if (root->keys[k] != 1) break;
+    // }
 
-    for(int l=0;l<=k;l++){
-        printf("root pointer %d \n", l);
-        NonLeafNode *child1 = (NonLeafNode*) (uintptr_t) (root->ptrs[l]);
-        for(int j=0;j<N;j++){
-            printf("%.0f ",child1->ptrs[j]);
-            printf("%.0f ",child1->keys[j]);
-        }
-        printf("%.0f \n",child1->ptrs[N]);
-    }
+    // for(int l=0;l<=k;l++){
+    //     printf("root pointer %d \n", l);
+    //     NonLeafNode *child1 = (NonLeafNode*) (uintptr_t) (root->ptrs[l]);
+    //     for(int j=0;j<N;j++){
+    //         printf("%.0f ",child1->ptrs[j]);
+    //         printf("%.0f ",child1->keys[j]);
+    //     }
+    //     printf("%.0f \n",child1->ptrs[N]);
+    // }
     
 
     // LeafNode *child = (LeafNode*)(uintptr_t) (child1->ptrs[16]);
