@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "bt_page.h": "c",
+        "lrucache.h": "c"
+    }
+}
