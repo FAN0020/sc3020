@@ -23,6 +23,8 @@ void deleteBTree(BTree* tree);
 double searchBTreeKey(BTree *tree, float key);
 double searchBTreeRangeKey(BTree *tree, float key);
 void printRootKeys(BTree *tree);
+void printBTree(BTree *tree);
+void printNode(double nodePtr, BTPage *page) ;
 int countNode(BTree *tree);
 int countLevel(BTPage *page, double node);
 

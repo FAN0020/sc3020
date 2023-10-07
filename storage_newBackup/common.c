@@ -44,3 +44,4 @@ int countLevels(double nodePtr, BTPage *page) {
         return 1 + countLevels(node->ptrs[0], page);  // assuming balanced tree
     }
 }
+

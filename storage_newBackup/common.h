@@ -17,6 +17,7 @@
 int countNodes(double nodePtr, BTPage *page);
 int countLevels(double nodePtr, BTPage *page);
 
+
 int countNodes(double nodePtr, BTPage *page) {
     if (nodePtr == -1) return 0;
 

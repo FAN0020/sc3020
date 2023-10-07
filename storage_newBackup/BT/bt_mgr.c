@@ -132,6 +132,47 @@ void printRootKeys(BTree *tree){
     }
     printf("\n");
 }
+void printNode(double nodePtr, BTPage *page) {
+    if (nodePtr == -1) return;
+
+    int type = searchPageRecord(page, nodePtr);
+
+    if (type == 1) {  // Non-leaf node
+        NonLeafNode* nlNode = (NonLeafNode*)(uintptr_t)nodePtr;
+        printf("NonLeaf: ");
+        for (int i = 0; i < N; i++) {
+            if (nlNode->keys[i] == -1) break; 
+            printf("%f ", nlNode->keys[i]);
+        }
+        printf("\n");
+
+        // Recursive calls for child pointers
+        for (int i = 0; i <= N; i++) {
+            if (nlNode->ptrs[i] != 0) {
+                printNode(nlNode->ptrs[i], page);
+            }
+        }
+    } else if (type == 2) {  // Leaf node
+        LeafNode* lNode = (LeafNode*)(uintptr_t)nodePtr;
+        printf("Leaf: ");
+        for (int i = 0; i < N; i++) {
+            if (lNode->keys[i] == -1) break;
+            printf("%f ", lNode->keys[i]);
+        }
+        printf("\n");
+    } else {
+        printf("Error: Unknown node type!\n");
+    }
+}
+
+void printBTree(BTree *tree) {
+    if (tree->root == -1) {
+        printf("Empty tree, there is no root.\n");
+    } else {
+        printNode(tree->root, tree->page);
+    }
+}
+
 
 /**
  * A function to count to total number of nodes in a B+ Tree (non-leaf and leaf)
@@ -177,4 +218,3 @@ int countLevel(BTPage *page, double node){
     }
 
 }
-
