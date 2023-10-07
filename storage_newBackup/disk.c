@@ -169,7 +169,7 @@ struct Disk* loadData(struct Disk* disk, const char* filename) {
         lineCounter++;
 
         // Debug
-        printf("(for debug)Line %d: %s", lineCounter, line);
+        //printf("(for debug)Line %d: %s", lineCounter, line);
 
         // Parse the line to create a record
         struct Record record;
@@ -194,7 +194,7 @@ struct Disk* loadData(struct Disk* disk, const char* filename) {
         }
 
         writeRecordToStorage(disk, record);
-        printf("Record No.: %d, Stored in Block: %d\n", disk->numOfRecords, currentBlockId);
+        //printf("Record No.: %d, Stored in Block: %d\n", disk->numOfRecords, currentBlockId);
     }
     
     fclose(file);

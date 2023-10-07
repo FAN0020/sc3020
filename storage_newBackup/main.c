@@ -9,7 +9,7 @@
 #include "block.c"
 #include "LRUCache.c"
 
-#include "common.h"
+//#include "common.h"
 #include "BT/bt_page.h"
 #include "BT/bt_node.h"
 #include "BT/bt_mgr.h"
@@ -63,8 +63,12 @@ int main() {
             for (int j = 0; j < numberOfRecordsInBlock; j++) {
                 struct Record rec = getRecordFromBlock(block, j);
                 insertInfo->key = rec.TEAM_ID_home; // Using TEAM_ID_home as the key
+                //insertInfo->key = rec.FG_PCT_home;
                 insertInfo->ptr = i; // The pointer in this context can be the block number. Adjust as needed.
+                printf("Inserting key: %f into the B+ tree...\n", insertInfo->key);
                 insertBTreeKey(tree, insertInfo);
+                printf("Root of the B+ tree after insertion: %f\n", tree->root);
+
                 printf("%f, %f\n",insertInfo->key, insertInfo->ptr);
 }
         }
@@ -73,10 +77,11 @@ int main() {
     printf("\n----------------------EXPERIMENT 2-----------------------\n");
     printf("Parameter n of the B+ tree: %d\n", N);
     // Get number of nodes by traversing the tree
-    int nodeCount = countNodes(tree->root, tree->page);
+    int nodeCount = countNode(tree);
     printf("Number of nodes of the B+ tree: %d\n", nodeCount);
     // // Get number of levels
-    int levelCount = countLevels(tree->root, tree->page);
+    int levelCount = countLevel(tree->page, tree->root);
+    //int levelCount = countLevel(tree->root, tree->page);
     printf("Number of levels of the B+ tree: %d\n", levelCount);
     printf("\n");
 
