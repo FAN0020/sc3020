@@ -429,9 +429,9 @@ int deleteLeafNodeKey(double root, UpdateNode* updateInfo, DeleteNode* deleteNod
     LeafNode *cNode = (LeafNode*)(uintptr_t)(updateInfo->cNode);
     key = cNode->keys[0]; // get old key.
     isInvalid = deleteLNodeKey(cNode,deleteNode->key);
-    //
-    UpdateLowerboundKeys(root, key,cNode->keys[0]);
-
+    if(updateInfo->cNode != root){
+        UpdateLowerboundKeys(root, key,cNode->keys[0]);
+    }
     // balance. 
     if(isInvalid & updateInfo->cNode != root){
         LeafNode* lNode, *rNode, *mergeLeft, *mergeRight; 
@@ -532,6 +532,7 @@ OverflowNode* createOverflowNode(double dataPtr){
  * @return returns binary 1 if there are things to be updated.
 */
 int insertOverflowRecord(OverflowNode* node, InsertNode* insertNode){
+    ioCount++;
     for(int i=0;i<OVERFLOW_RECS;i++){
         if(node->dataBlocks[i] == insertNode->ptr){
             //data block already indexed, stop. 
@@ -599,41 +600,69 @@ double CheckOverflowNode(OverflowNode* node){
  * A function to delete overflow record. 
  * @param node overflow node where the record is stored.
  * @param deleteNode information of the record to be deleted.
- * @return returns binary, 1 if any overflow node is deleted.
+ * @return returns binary, 1 if parent nodes need to be updated.
 */
 int deleteOverflowRecord(OverflowNode* node, DeleteNode* deleteNode){
-    for(int i = 0; i < OVERFLOW_RECS;i++){
-        // delete record. 
-        if(node->dataBlocks[i] == deleteNode->ptr){
-            node->dataBlocks[i] == -1;
-            //move last node of overflow forward if node not last node.
-            OverflowNode* lastNode = lastOverflowNode(node);
-            if(lastNode != node){
-                for(int j = OVERFLOW_RECS-1;j>=0;j--){
-                    if(lastNode->dataBlocks[j] != -1){
-                        node->dataBlocks[i] = lastNode->dataBlocks[j];
-                        lastNode->dataBlocks[j] = -1;
+    double prevPtr, currPtr; 
+    OverflowNode* currNode = node; 
+    while(currNode != NULL){
+        for(int i = 0; i < OVERFLOW_RECS;i++){
+            // delete record. deleteover
+            if(currNode->dataBlocks[i] == deleteNode->ptr){
+                currNode->dataBlocks[i] = -1;
+                //move last node of overflow forward if node not last node.
+                OverflowNode* lastNode = lastOverflowNode(node);
+                if(lastNode != currNode){
+                    prevPtr = CheckOverflowNode(lastNode);
+                    for(int j = OVERFLOW_RECS-1;j>=0;j--){
+                        if(lastNode->dataBlocks[j] != -1){
+                            currNode->dataBlocks[i] = lastNode->dataBlocks[j];
+                            lastNode->dataBlocks[j] = -1;
+                            break;
+                        }
                     }
+                    currPtr = CheckOverflowNode(lastNode);
+                    if(prevPtr!=-1 & currPtr != -1){
+                        deleteOverflowNode(node,lastNode);
+                    }
+                    return 0;
+                }
+                // delete empty overflow node when necessary. 
+                double pointer = CheckOverflowNode(lastNode);
+                deleteNode->ptr = pointer;
+                if(pointer == -1){
+                    return 0;
+                }
+                else{
+                    return 1;
                 }
             }
-            // delete empty overflow node when necessary. 
-            double pointer = CheckOverflowNode(lastNode);
-            deleteNode->ptr = pointer;
-            if(pointer == -1){
-                return 0;
-            }
-            else{
-                free(lastNode);
-                return 1;
-            }
         }
+        currNode = currNode->next;
     }
-    //record not found, move to next node. 
-    if(node->next == NULL){
-        return 0; 
+    printf("Record not found in tree.\n");
+    return 0; 
+}
+
+/**
+ * A function to deleteOverflow node
+ * @param node current overflow node
+ * @param delNode overflow node to delete
+ * @return returns the pointer of the deleted node. 
+*/
+double deleteOverflowNode(OverflowNode* node, OverflowNode* delNode){
+    // first overflow node.
+    if(node == delNode){
+        free(node);
+        return (double)(uintptr_t)delNode;
+    }
+    else if(node->next == delNode){
+        node->next = delNode->next;
+        free(delNode);
+        return (double)(uintptr_t)delNode;
     }
     else{
-        return deleteOverflowRecord(node->next, deleteNode);
+        return deleteOverflowNode(node->next, delNode);
     }
     
 }
@@ -652,6 +681,7 @@ int insertKey(BTPage *page, double nodePtr,InsertNode* insertNode){
     int nodeType = searchPageRecord(page, nodePtr);
     // non-leaf node
     if(nodeType == 1){
+        ioCount++;
         NonLeafNode *nlNode = (NonLeafNode*)(uintptr_t)nodePtr; 
         // go deeper into the tree
         childPtr = searchNonLeafNode(nlNode,insertNode->key); 
@@ -667,6 +697,7 @@ int insertKey(BTPage *page, double nodePtr,InsertNode* insertNode){
         }
     }
     else if(nodeType ==2){
+        ioCount++;
         LeafNode *lNode = (LeafNode*)(uintptr_t)nodePtr; 
         // go deeper into the tree
         childPtr = searchLeafNode(lNode,insertNode->key); 
@@ -719,6 +750,14 @@ int insertKey(BTPage *page, double nodePtr,InsertNode* insertNode){
     return toUpdate; 
 }
 
+/**
+ * A function to delete key record from tree
+ * @param page contains the list of nodes and their type
+ * @param root the pointer of the root of the tree.
+ * @param nodePtr the current node.
+ * @param deleteNode information of the tree to be deleted.
+ * @param UpdateNode object containing the left and right nodes.
+*/
 int deleteKey(BTPage *page,double root, double nodePtr,DeleteNode* deleteNode, UpdateNode* nodeInfo){
     // identify type of node, 1) non-leaf, 2) leaf, 3) overflow. 
     int index, toUpdate = 0;
@@ -726,6 +765,7 @@ int deleteKey(BTPage *page,double root, double nodePtr,DeleteNode* deleteNode, U
     int nodeType = searchPageRecord(page, nodePtr);
     // non-leaf node
     if(nodeType == 1){
+        ioCount++;
         NonLeafNode *nlNode = (NonLeafNode*)(uintptr_t)nodePtr; 
         index = searchNonLeafNodeKey(nlNode,deleteNode->key);
         toUpdate = deleteKey(page,root,nlNode->ptrs[index],deleteNode,nodeInfo);
@@ -742,30 +782,47 @@ int deleteKey(BTPage *page,double root, double nodePtr,DeleteNode* deleteNode, U
         }
     }
     else if(nodeType ==2){
+        ioCount++;
         LeafNode *lNode = (LeafNode*)(uintptr_t)nodePtr; 
         // go deeper into the tree 
         index = searchLeafNodeKey(lNode,deleteNode->key);
-        toUpdate = deleteKey(page,root,lNode->ptrs[index],deleteNode,nodeInfo);
+        if(index == -1){
+            printf("There are no records with key %.f\n");
+        }
+        // skip depth if whole key is to be deleted.
+        else if(deleteNode->ptr==-2){
+            resultPtr = lNode->ptrs[index];
+            toUpdate = 1;
+        }
+        // enter depth to find record to delete.
+        else{
+            toUpdate = deleteKey(page,root,lNode->ptrs[index],deleteNode,nodeInfo);
+        }
         if(toUpdate){
+            int type = searchPageRecord(page,deleteNode->ptr);
             // updating ptr from overflow node to only 1 datablock.
-            if(deleteNode->ptr != -2){
+            if(type == 0){
+                lNode->ptrs[index] = deleteNode->ptr; 
+                // key doesn't have any corresponding records, delete key.
+                if(lNode->ptrs[index]==-2){
+                    getNodes(page, root,deleteNode->key,deleteNode->ptr,nodeInfo);
+                    toUpdate = deleteLeafNodeKey(root, nodeInfo,deleteNode);
+                    if(toUpdate){
+                        // free up node
+                        deleteLeafNode((LeafNode*)(uintptr_t)(deleteNode->ptr));
+                        // delete page record.
+                        deletePageRecord(page, deleteNode->ptr);
+                    }
+                }
+                else{
+                    deleteOverflowNode((OverflowNode*)(uintptr_t)(lNode->ptrs[index]),(OverflowNode*)(uintptr_t)(lNode->ptrs[index]));
+                    toUpdate=0; 
+                }
+            }
+            else if(type == 2){
+                deleteOverflowNode((OverflowNode*)(uintptr_t)(lNode->ptrs[index]),(OverflowNode*)(uintptr_t)(deleteNode->ptr));
                 lNode->ptrs[index] = deleteNode->ptr; 
                 toUpdate=0; 
-            }
-            else{
-                // update key if necessary. 
-                if(deleteNode->ptr == -2){
-                    lNode->ptrs[index] = -2; 
-                }
-                // delete key
-                getNodes(page, root,deleteNode->key,deleteNode->ptr,nodeInfo);
-                toUpdate = deleteLeafNodeKey(root, nodeInfo,deleteNode);
-                if(toUpdate){
-                    // free up node
-                    deleteLeafNode((LeafNode*)(uintptr_t)(deleteNode->ptr));
-                    // delete page record.
-                    deletePageRecord(page, deleteNode->ptr);
-                }
             }
         }
     }
@@ -774,16 +831,17 @@ int deleteKey(BTPage *page,double root, double nodePtr,DeleteNode* deleteNode, U
         toUpdate = deleteOverflowRecord(oNode,deleteNode);
         // new node created
         if(toUpdate){
-            // delete empty record.
-            deletePageRecord(page, deleteNode->ptr);
-            if(deleteNode->ptr != (double)(uintptr_t)oNode){
+            if(deleteNode->ptr == (double)(uintptr_t)oNode){
                 toUpdate = 0;
             }
         }
     }
     else{
-        deleteNode->ptr = -2; 
-        toUpdate = 1;
+        if(nodePtr == deleteNode->ptr){
+            deleteNode->ptr = -2; 
+            resultPtr = nodePtr;
+            toUpdate = 1;
+        }
     }
     return toUpdate; 
 }
@@ -916,7 +974,7 @@ double searchRangeKey(BTPage *page, double node, float key){
     if (nodeType == 1){
         NonLeafNode *nlNode = (NonLeafNode*)(uintptr_t)node;
         index = searchNonLeafNodeKey(nlNode, key);
-        return searchKey(page, nlNode->ptrs[index],key);
+        return searchRangeKey(page, nlNode->ptrs[index],key);
     }
     // leaf node
     else{

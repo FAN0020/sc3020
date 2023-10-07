@@ -39,10 +39,23 @@ void insertBTreeKey(BTree* tree,InsertNode* insertNode){
 void deleteBTreeKey(BTree* tree, UpdateNode* updateNode, DeleteNode* deleteInfo){
     // delete!
     int toUpdate = deleteKey(tree->page, tree->root,tree->root, deleteInfo, updateNode); 
-    NonLeafNode* root = (NonLeafNode*)(uintptr_t)(tree->root);
-    if(root->keys[0] == -1){
-        tree->root = root->ptrs[0];
+    int nodeType = searchPageRecord(tree->page,tree->root);
+    if(nodeType == 1){
+        NonLeafNode* nlNode = (NonLeafNode*)(uintptr_t)(tree->root);
+        if(nlNode->keys[0] == -1){
+            deletePageRecord(tree->page,tree->root);
+            tree->root = nlNode->ptrs[0];
+            deleteNonLeafNode(nlNode);
+        }
     }
+    else if(nodeType == 2){
+        LeafNode* lNode = (LeafNode*)(uintptr_t)(tree->root);
+        if(lNode->keys[0] == -1){
+            tree->root = -1;
+            deleteLeafNode(lNode);
+        }
+    }
+    
 }
 
 /**
@@ -93,3 +106,75 @@ double searchBTreeKey(BTree *tree, float key){
 double searchBTreeRangeKey(BTree *tree, float key){
     return searchRangeKey(tree->page,tree->root,key);
 }
+
+/**
+ * A function to print out the keys of the root node. 
+ * @param tree the B+ Tree
+*/
+void printRootKeys(BTree *tree){
+    int type = searchPageRecord(tree->page, tree->root);
+    if(type == 1){
+        NonLeafNode* nlNode = (NonLeafNode*)(uintptr_t)(tree->root);
+        for(int i=0;i<N;i++){
+            if(nlNode->keys[i] == -1) break; 
+            printf("%f ",nlNode->keys[i]);
+        }
+    }
+    else if(type == 2){
+        LeafNode* lNode = (LeafNode*)(uintptr_t)(tree->root);
+        for(int i=0;i<N;i++){
+            if(lNode->keys[i] == -1) break; 
+            printf("%f ",lNode->keys[i]);
+        }
+    }
+    else{
+        printf("Empty tree, there is no root.");
+    }
+    printf("\n");
+}
+
+/**
+ * A function to count to total number of nodes in a B+ Tree (non-leaf and leaf)
+ * @param tree objecting containing the tree which nodes we are counting.
+ * @return returns the total number of nodes in the tree.
+*/
+int countNode(BTree *tree){
+    int count=0, i;
+    BTPage* curPage = tree->page;
+    // loop through pages and count non-leaf nodes and leaf nodes.
+    while(curPage!=NULL){
+        for(i=0; i<P_REC_COUNT;i++){
+            // if non-leaf/leaf, add counter.
+            if(curPage->types[i] == 1 | curPage->types[i] == 2){
+                count++; 
+            }
+        }
+        curPage = curPage->next;
+    }
+    return count;
+}
+
+/**
+ * A function to count the number of node levels in a B+ Tree. 
+ * @param page object containing all the nodes and their types, used to identify node. 
+ * @param node pointer of the current node. 
+ * @return returns the number of levels in a tree.
+*/
+int countLevel(BTPage *page, double node){
+    int nodeType = searchPageRecord(page, node);
+    // leaf node found, count leaf node and end recursive.
+    if(nodeType == 2){
+        return 1; 
+    }
+    // non-leaf node found, go deeper into tree and count non-leaf node.
+    else if(nodeType == 1){
+        NonLeafNode* nlNode = (NonLeafNode*)(uintptr_t)(node);
+        return 1 + countLevel(page, nlNode->ptrs[0]);
+    }
+    // no node found.
+    else{
+        return 0;
+    }
+
+}
+

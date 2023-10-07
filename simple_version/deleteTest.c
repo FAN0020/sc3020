@@ -10,15 +10,33 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 // functions 
+
+int countManualNodes(double node, BTPage *page){
+    int count=0, type = searchPageRecord(page, node);
+    if(type != 1){
+        return 0; 
+    }
+    else{
+        NonLeafNode *nlNode = (NonLeafNode*)(uintptr_t)node;
+        count = 1 + countManualNodes(nlNode->ptrs[0],page);
+        for(int i = 0; i<N; i++){
+            if(nlNode->keys[i] != -1){
+                count += 1 + countManualNodes(nlNode->ptrs[i+1],page);
+            }
+        }
+        return count;
+    }
+}
+
+
 int main(){
     char field[20] = "test";
     BTree* testTree = createTree(field);
     InsertNode* insertNode = (InsertNode*) malloc(sizeof(InsertNode));
     NonLeafNode* root;
 
-    int value = 36*16+1;;
+    int value = 26651;
     for(int i=1; i<=value;i++){
         printf("i = %d \n",i);
         insertNode->key = value-i+1;
@@ -47,6 +65,11 @@ int main(){
     UpdateNode *update = (UpdateNode*) malloc(sizeof(UpdateNode));
     DeleteNode *delete = (DeleteNode*)malloc(sizeof(DeleteNode)); 
 
+    printf("The number of nodes in the tree = %d\n", countNode(testTree));
+    printf("The number of levels in the tree = %d\n", countLevel(testTree->page,testTree->root));
+
+    printf("The number of nodes in the tree = %d\n", countManualNodes(testTree->root,testTree->page)+1);
+    
     for(int j = 343; j<365; j++){
         
         delete->key = j; 
@@ -106,4 +129,6 @@ int main(){
     // }
     // printf("%.0f \n",child->next);
 
+    // Count the non-list node
+    
 }
