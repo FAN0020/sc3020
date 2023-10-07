@@ -145,7 +145,7 @@ int countNode(BTree *tree){
     while(curPage!=NULL){
         for(i=0; i<P_REC_COUNT;i++){
             // if non-leaf/leaf, add counter.
-            if(curPage->types[i] == 1 | curPage->types[i] == 2){
+            if(curPage->types[i] != 0){
                 count++; 
             }
         }
