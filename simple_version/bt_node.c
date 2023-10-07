@@ -634,6 +634,7 @@ int deleteOverflowRecord(BTPage *page,OverflowNode* node, DeleteNode* deleteNode
                     return 0;
                 }
                 else{
+                    deleteOverflowNode(page,node,lastNode);
                     return 1;
                 }
             }
@@ -817,7 +818,7 @@ int deleteKey(BTPage *page,double root, double nodePtr,DeleteNode* deleteNode, U
                     }
                 }
                 else{
-                    deleteOverflowNode(page,(OverflowNode*)(uintptr_t)(lNode->ptrs[index]),(OverflowNode*)(uintptr_t)(lNode->ptrs[index]));
+                    //deleteOverflowNode(page,(OverflowNode*)(uintptr_t)(lNode->ptrs[index]),(OverflowNode*)(uintptr_t)(lNode->ptrs[index]));
                     toUpdate=0; 
                 }
             }
