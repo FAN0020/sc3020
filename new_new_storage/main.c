@@ -77,7 +77,6 @@ int main() {
                 printf("%f, %f\n",insertInfo->key, insertInfo->ptr);
 }
         }
-        break;
         if(counter == getNumberBlockUsed(disk)) break;
     }
     printf("\n----------------------EXPERIMENT 2-----------------------\n");
