@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-void deleteDBKey(BTree *tree, float key){
+void deleteDBKey(BTree *tree, double key){
     // creating deletion information
     DeleteNode *deleteInfo = (DeleteNode*)malloc(sizeof(DeleteNode));
     deleteInfo->key = key;
@@ -89,7 +89,7 @@ PtrList* getDataBlocks(BTree *tree, double ptr){
  * @param startKey the starting range of keys of records to be deleted.
  * @param endKey the ending range of keys of records to be deleted.
 */
-void deleteRecords(PtrList *datablockList, float startKey, float endKey){
+void deleteRecords(PtrList *datablockList, double startKey, double endKey){
     // delete records from data block. 
     PtrList *curBlock = datablockList, *nxtBlock;
     while(curBlock!=NULL){

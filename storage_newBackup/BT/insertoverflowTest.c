@@ -22,7 +22,7 @@ int main(){
     LeafNode *child;
     OverflowNode *overflow;
 
-    int value = OVERFLOW_RECS*12;
+    int value = 24;
     for(int i=1; i<=value;i++){
         printf("i = %d \n",i);
         insertNode->key = i%3;

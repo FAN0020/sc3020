@@ -12,7 +12,7 @@
  * @param ptr2 pointer to the second child
  * @return returns the nonleaf node created
 */
-NonLeafNode* createNonleafNode(double ptr1, float key2, double ptr2){
+NonLeafNode* createNonleafNode(double ptr1, double key2, double ptr2){
     NonLeafNode* node = (NonLeafNode*)malloc(sizeof(NonLeafNode));
     int i; 
     for(i=N;i>1;i--){
@@ -33,7 +33,7 @@ NonLeafNode* createNonleafNode(double ptr1, float key2, double ptr2){
 */
 int insertNonLeafNodeKey(NonLeafNode* node,InsertNode* insertNode){
     int i, midKey=N/2;
-    float lowerboundKey=insertNode->key;
+    double lowerboundKey=insertNode->key;
     double lowerboundptr=insertNode->ptr;
     NonLeafNode* newNode; 
     // Node is full
@@ -82,7 +82,7 @@ int insertNonLeafNodeKey(NonLeafNode* node,InsertNode* insertNode){
  * @param key loweer bound key of child node. 
  * @param ptr pointer of the child node. 
 */
-void insertNLNodeKey(NonLeafNode* node,float key, double ptr,int isLowerbound){
+void insertNLNodeKey(NonLeafNode* node,double key, double ptr,int isLowerbound){
     for(int i=N-1; i>0; i--){
         if(node->keys[i-1] != -1){
             if(node->keys[i-1]>key){
@@ -113,7 +113,7 @@ void insertNLNodeKey(NonLeafNode* node,float key, double ptr,int isLowerbound){
  * @param key search key
  * @return returns the "index position" of the pointer of key
 */
-int searchNonLeafNodeKey(NonLeafNode* node, float key){
+int searchNonLeafNodeKey(NonLeafNode* node, double key){
     int i; 
     for(i=0;i<N;i++){
         if(key < node->keys[i] | node->keys[i] == -1){
@@ -129,7 +129,7 @@ int searchNonLeafNodeKey(NonLeafNode* node, float key){
  * @param key search key
  * @return returns the child node pointer.
 */
-double searchNonLeafNode(NonLeafNode* node, float key){
+double searchNonLeafNode(NonLeafNode* node, double key){
     int i; 
     for(i=0;i<=N;i++){
         if(key < node->keys[i] | node->keys[i] == -1){
@@ -145,7 +145,7 @@ double searchNonLeafNode(NonLeafNode* node, float key){
  * @param delKey pointer to the node to be deleted.
  * @return returns binary 0) deleting key has no error 1) invalid node (not enough keys)
 */
-int deleteNLNodeKey(NonLeafNode* node, float delKey){
+int deleteNLNodeKey(NonLeafNode* node, double delKey){
     int i = searchNonLeafNodeKey(node,delKey);
     for(i; i<N; i++){
         if(i!=0){
@@ -262,7 +262,7 @@ double deleteNonLeafNode(NonLeafNode* node){
  * @param node current node
  * @return returns the lowerbound key of the node.
 */
-float retrieveNonLeafLowerboundKey(BTPage* page, double node){
+double retrieveNonLeafLowerboundKey(BTPage* page, double node){
     int nodeType = searchPageRecord(page, node);
     // non-leaf, move deeper down the tree.
     if(nodeType == 1){
@@ -282,7 +282,7 @@ float retrieveNonLeafLowerboundKey(BTPage* page, double node){
  * function to create leaf Node
  * @return returns the leafnode created
 */
-LeafNode* createLeafNode(float key, double ptr){
+LeafNode* createLeafNode(double key, double ptr){
     LeafNode* node = (LeafNode*)malloc(sizeof(LeafNode));
     int i; 
     for(i=N-1;i>0;i--){
@@ -344,7 +344,7 @@ int insertLeafNodeKey(LeafNode* node,InsertNode* insertNode){
  * @param key lower bound key of child node. 
  * @param ptr pointer of the child node. 
 */
-void insertLNodeKey(LeafNode* node,float key, double ptr){
+void insertLNodeKey(LeafNode* node,double key, double ptr){
     for(int i=N-1; i>0; i--){
         if(node->keys[i-1] != -1){
             if(node->keys[i-1]>key){
@@ -369,7 +369,7 @@ void insertLNodeKey(LeafNode* node,float key, double ptr){
  * @param key search key
  * @return returns the "index position" of the key or -1 if key not found
 */
-int searchLeafNodeKey(LeafNode* node, float key){
+int searchLeafNodeKey(LeafNode* node, double key){
     for(int i=0;i<N;i++){
         if(node->keys[i] == key){
             return i; 
@@ -384,7 +384,7 @@ int searchLeafNodeKey(LeafNode* node, float key){
  * @param key search key
  * @return returns the child node pointer.
 */
-double searchLeafNode(LeafNode* node, float key){
+double searchLeafNode(LeafNode* node, double key){
     int i; 
     for(i=0;i<N;i++){
         if(key == node->keys[i]){
@@ -400,7 +400,7 @@ double searchLeafNode(LeafNode* node, float key){
  * @param delKey pointer to the node to be deleted.
  * @return returns binary 0) deleting key has no error 1) invalid node (not enough keys)
 */
-int deleteLNodeKey(LeafNode* node, float delKey){
+int deleteLNodeKey(LeafNode* node, double delKey){
     int i = searchLeafNodeKey(node,delKey);
     for(i; i<N-1; i++){
         node->keys[i] = node->keys[i+1];
@@ -857,7 +857,7 @@ int deleteKey(BTPage *page,double root, double nodePtr,DeleteNode* deleteNode, U
  * @param key key we're searching for.
  * @param nodeInfo object containing the node we're searching for and it's neighbouring nodes.
 */
-int getNodes(BTPage* page, double node,float key,float ptr, UpdateNode* nodeInfo){
+int getNodes(BTPage* page, double node,double key,double ptr, UpdateNode* nodeInfo){
     int depth = 0;
     double currNode;
     if(searchPageRecord(page, node) == 2){
@@ -918,7 +918,7 @@ int getNodes(BTPage* page, double node,float key,float ptr, UpdateNode* nodeInfo
  * @param oldKey the old lowerbound key of the leaf node 
  * @param newKey the new lowerbound key of the leaf node
 */
-void UpdateLowerboundKeys(double node, float oldKey, float newKey){
+void UpdateLowerboundKeys(double node, double oldKey, double newKey){
     if(oldKey != newKey){
         NonLeafNode* nlNode = (NonLeafNode*)(uintptr_t)node;
         int index = searchNonLeafNodeKey(nlNode,oldKey); 
@@ -942,7 +942,7 @@ void UpdateLowerboundKeys(double node, float oldKey, float newKey){
 
 int search_counter = 0;
 
-double searchKey(BTPage *page, double node, float key){
+double searchKey(BTPage *page, double node, double key){
     (*(&search_counter))++;
     double result = 0;
     int nodeType, index;
@@ -969,7 +969,7 @@ double searchKey(BTPage *page, double node, float key){
  * @param key the key we're searching for. 
  * @return returns the leafnode containing the start of the range. 
 */
-double searchRangeKey(BTPage *page, double node, float key){
+double searchRangeKey(BTPage *page, double node, double key){
     double result = 0;
     int nodeType, index;
     nodeType = searchPageRecord(page,node);

@@ -6,7 +6,7 @@
 #include <string.h>
 
 typedef struct _keylist{
-    float key; 
+    double key; 
     struct _keylist *next;
 }KeyList;
 
@@ -15,9 +15,9 @@ typedef struct _ptrlist{
     struct _ptrlist *next;
 }PtrList;
 
-void deleteDBKey(BTree *tree, float key);
+void deleteDBKey(BTree *tree, double key);
 PtrList* getDataBlocks(BTree *tree, double ptr);
-void deleteRecords(PtrList *datablockList,float startKey, float endKey);
+void deleteRecords(PtrList *datablockList,double startKey, double endKey);
 KeyList* insertKeyListKey(KeyList *keyList,double newKey);
 double findPtrListPtr(PtrList *dataBlockList, double findPtr);
 PtrList* insertPtrListPtr(PtrList *dataBlockList,double newPtr);
