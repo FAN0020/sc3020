@@ -1,7 +1,6 @@
 #ifndef BT_NODE_H
 #define BT_NODE_H
 
-//#include "storage.h"
 #include "bt_page.h"
 #include <string.h>
 
@@ -10,7 +9,10 @@
 #define N (400-sizeof(double))/(sizeof(float)+sizeof(double))
 #define OVERFLOW_RECS (400-sizeof(double))/sizeof(double)
 
-// declare objects 
+// declare global variables and objects 
+int ioCount = 0;
+double resultPtr = -1;
+
 
 /**
  * Object representing the non-leaf nodes, containing n keys and n+1 pointers to next node. 
@@ -88,14 +90,15 @@ int insertOverflowRecord(OverflowNode* node, InsertNode* insertNode);
 OverflowNode* lastOverflowNode(OverflowNode *node);
 double CheckOverflowNode(OverflowNode* node);
 int deleteOverflowRecord(OverflowNode* node, DeleteNode* deleteNode);
+double deleteOverflowNode(OverflowNode* node, OverflowNode* delNode);
 
 int insertKey(BTPage *page, double nodePtr, InsertNode* insertNode);
 int deleteKey(BTPage *page,double root, double nodePtr,DeleteNode* deleteNode, UpdateNode* nodeInfo);
 int getNodes(BTPage* page, double node,float key,float ptr,UpdateNode* nodeInfo);
 void UpdateLowerboundKeys(double node, float oldKey, float newKey);
 
-
-
+double searchKey(BTPage *page, double node, float key);
+double searchRangeKey(BTPage *page, double node, float key);
 
 
 #endif //BT_NODE_H

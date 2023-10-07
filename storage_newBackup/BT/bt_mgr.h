@@ -19,7 +19,11 @@ typedef struct _btree{
 BTree* createTree(char field[20]);
 void insertBTreeKey(BTree* tree,InsertNode* insertNode);
 void deleteBTreeKey(BTree* tree, UpdateNode* updateNode, DeleteNode* deleteInfo);
-void deleteBtree();
-
+void deleteBTree(BTree* tree);
+double searchBTreeKey(BTree *tree, float key);
+double searchBTreeRangeKey(BTree *tree, float key);
+void printRootKeys(BTree *tree);
+int countNode(BTree *tree);
+int countLevel(BTPage *page, double node);
 
 #endif //BT_MGR_H

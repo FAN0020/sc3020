@@ -65,7 +65,8 @@ int main() {
                 insertInfo->key = rec.TEAM_ID_home; // Using TEAM_ID_home as the key
                 insertInfo->ptr = i; // The pointer in this context can be the block number. Adjust as needed.
                 insertBTreeKey(tree, insertInfo);
-            }
+                printf("%f, %f\n",insertInfo->key, insertInfo->ptr);
+}
         }
         if(counter == getNumberBlockUsed(disk)) break;
     }
@@ -78,6 +79,12 @@ int main() {
     int levelCount = countLevels(tree->root, tree->page);
     printf("Number of levels of the B+ tree: %d\n", levelCount);
     printf("\n");
+
+    printf("\n----------------------EXPERIMENT 3-----------------------\n");
+    search_counter = 0;
+    double something = searchBTreeKey(tree, 0.5);
+    printf("%d", search_counter);
+
 
     // free the memory
     freeDisk(disk);

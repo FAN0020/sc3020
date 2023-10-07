@@ -53,4 +53,32 @@ int main(){
         printf("%.0f ",overflow->dataBlocks[j]);
     }
 
+    printRootKeys(testTree);
+
+    UpdateNode *update = (UpdateNode*) malloc(sizeof(UpdateNode));
+    DeleteNode *delete = (DeleteNode*)malloc(sizeof(DeleteNode)); 
+
+    printf("DELETE\n");
+    for(int i=30; i<37;i++)
+    {
+        delete->key = 3; 
+        delete->ptr = i; 
+        deleteBTreeKey(testTree,update,delete);
+
+        printRootKeys(testTree);
+        printf("%f \n",resultPtr);
+
+        overflow = (OverflowNode*)(uintptr_t)(child->ptrs[0]);
+        for(int j=0;j<OVERFLOW_RECS;j++){
+            printf("%.0f ",overflow->dataBlocks[j]);
+        } 
+        printf("\n");
+
+        if(overflow->next == NULL) printf("Null block");
+
+    }
+
+
+    
+
 }
