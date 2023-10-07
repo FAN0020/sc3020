@@ -89,8 +89,8 @@ OverflowNode* createOverflowNode(double dataPtr);
 int insertOverflowRecord(OverflowNode* node, InsertNode* insertNode);
 OverflowNode* lastOverflowNode(OverflowNode *node);
 double CheckOverflowNode(OverflowNode* node);
-int deleteOverflowRecord(OverflowNode* node, DeleteNode* deleteNode);
-double deleteOverflowNode(OverflowNode* node, OverflowNode* delNode);
+int deleteOverflowRecord(BTPage *page,OverflowNode* node, DeleteNode* deleteNode);
+double deleteOverflowNode(BTPage *page,OverflowNode* node, OverflowNode* delNode);
 
 int insertKey(BTPage *page, double nodePtr, InsertNode* insertNode);
 int deleteKey(BTPage *page,double root, double nodePtr,DeleteNode* deleteNode, UpdateNode* nodeInfo);
