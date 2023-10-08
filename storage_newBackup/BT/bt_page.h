@@ -4,7 +4,7 @@
 // defining fixed variables
 #define NODE_SIZE 400
 #define P_REC_COUNT (NODE_SIZE-8)/(4+8)
-
+#include <stdint.h>
 
 /**
  * Object containing a list of BT blocks and its type.

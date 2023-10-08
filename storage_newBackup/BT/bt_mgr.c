@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <stdint.h>
 /**
  * function to create a B+ Tree
  * @param field the field the records are indexed by. 
@@ -93,7 +93,7 @@ void deleteBTree(BTree* tree){
  * @param key key we're searching for in the tree.
  * @return returns the datablock/overflow node containing the records. (returns -1 if key is not found.)
 */
-double searchBTreeKey(BTree *tree, float key){
+double searchBTreeKey(BTree *tree, double key){
     return searchKey(tree->page,tree->root,key);
 }
 
@@ -103,7 +103,7 @@ double searchBTreeKey(BTree *tree, float key){
  * @param key starting range key we're searching for in the tree.
  * @return returns the leaf node containing start of the range.
 */
-double searchBTreeRangeKey(BTree *tree, float key){
+double searchBTreeRangeKey(BTree *tree, double key){
     return searchRangeKey(tree->page,tree->root,key);
 }
 
