@@ -67,7 +67,7 @@ void deleteDBRangeKey(BTree *tree, double startKey, double endKey){
         for(int i = 0; i<N; i++){
             if(curNode->keys[i] == -1) break; 
             else if (curNode->keys[i] >= startKey & curNode->keys[i] <= endKey){
-                keys = insertListNodeKey(keys,curNode->keys[i]);
+                keys = insertListNodeVal(keys,curNode->keys[i]);
             }
             else if (curNode->keys[i] > endKey){
                 foundAllKeys = 1; 
@@ -79,7 +79,7 @@ void deleteDBRangeKey(BTree *tree, double startKey, double endKey){
     // retrieve the datablocks
     // creating deletion information
     DeleteNode *deleteInfo = (DeleteNode*)malloc(sizeof(DeleteNode));
-    deleteInfo->key = key;
+    deleteInfo->key = 0;
     deleteInfo->ptr = -2; //representing deleting all records with this key. 
     // creating update Info placeholder.
     UpdateNode *updateInfo = (UpdateNode*) malloc(sizeof(UpdateNode));
@@ -113,8 +113,8 @@ ListNode* getDataBlocks(BTree *tree, double ptr){
             nextNode = curNode->next;
             for(int i=0; i<OVERFLOW_RECS ;i++){
                 // if valid datablock and datablock not in list, add into list.
-                if(curNode->dataBlocks[i] != -1 & !findListNodePtr(ptrs, curNode->dataBlocks[i])){
-                    ptrs = insertListNodePtr(ptrs,curNode->dataBlocks[i]);
+                if(curNode->dataBlocks[i] != -1 & !findListNodeVal(ptrs, curNode->dataBlocks[i])){
+                    ptrs = insertListNodeVal(ptrs,curNode->dataBlocks[i]);
                 }
             }
             deleteOverflowNode(tree->page,curNode,curNode); // delete overflow node.
@@ -123,7 +123,7 @@ ListNode* getDataBlocks(BTree *tree, double ptr){
     }
     // enter lone datablock into list
     else{
-        insertListNodePtr(ptrs,resultPtr);
+        insertListNodeVal(ptrs,resultPtr);
     }
 
     return ptrs; 
@@ -166,7 +166,7 @@ double findListNodeVal(ListNode *list, double findval){
     if(list == NULL) return 0; 
     else{
         if(list->value == findval) return 1;
-        else findListNodePtr(list->next, findval);
+        else findListNodeVal(list->next, findval);
     }
 }
 

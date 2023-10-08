@@ -1,9 +1,14 @@
 #include "BT/bt_mgr.h"
 #include "database.h"
+#include "disk.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
+#include <time.h>
+
+// functions 
 
 /**
  * A function to delete keys and records in the database 
@@ -11,6 +16,8 @@
  * @param key the key value we're trying to delete.
 */
 void deleteDBKey(BTree *tree, double key){
+    startT = clock();
+    ioCount = 0; // reset IO count
     // creating deletion information
     DeleteNode *deleteInfo = (DeleteNode*)malloc(sizeof(DeleteNode));
     deleteInfo->key = key;
@@ -38,11 +45,12 @@ void deleteDBKey(BTree *tree, double key){
     }
     printf("\n");
     // delete records.
-
     deleteRecords(tree,ptrs,key,key);
     
     free(updateInfo);
     free(deleteInfo);
+
+    endT=clock();
 }
 
 /**
@@ -51,8 +59,7 @@ void deleteDBKey(BTree *tree, double key){
 */
 void deleteDBRangeKey(BTree *tree, double startKey, double endKey){
     // get the keys within the range.
-    ListNode* keys = NULL; 
-    ListNode* ptrs = NULL; 
+    ListNode* keys = NULL, *ptrs = NULL, *keyPtrs = NULL; 
     double ptr = searchBTreeRangeKey(tree,startKey); // get first leaf node containing range keys.
     int nodeType = searchPageRecord(tree->page, ptr);
     if (nodeType != 2) {
@@ -64,6 +71,7 @@ void deleteDBRangeKey(BTree *tree, double startKey, double endKey){
     curNode = lNode; 
     // loop through leaf node to find keys within range. 
     while(curNode != NULL & !foundAllKeys){
+        ioCount++;
         for(int i = 0; i<N; i++){
             if(curNode->keys[i] == -1) break; 
             else if (curNode->keys[i] >= startKey & curNode->keys[i] <= endKey){
@@ -79,17 +87,36 @@ void deleteDBRangeKey(BTree *tree, double startKey, double endKey){
     // retrieve the datablocks
     // creating deletion information
     DeleteNode *deleteInfo = (DeleteNode*)malloc(sizeof(DeleteNode));
-    deleteInfo->key = key;
+    deleteInfo->key = 0;
     deleteInfo->ptr = -2; //representing deleting all records with this key. 
     // creating update Info placeholder.
     UpdateNode *updateInfo = (UpdateNode*) malloc(sizeof(UpdateNode));
 
-    // delete key from
+    // delete keys from BTree and get all datablocks with records. 
+    ListNode* curKey = keys, *nxtKey, *nxtKeyPtr; 
+    while(curKey != NULL){
+        nxtKey = curKey->next;
+        deleteInfo->key = curKey->value;
+        // find datablocks of each key.
+        keyPtrs = getDataBlocks(tree, resultPtr);
+        // add pointers of key into the overall list, ptrs.
+        while(keyPtrs != NULL){
+            nxtKeyPtr = keyPtrs->next;
+            if(!findListNodeVal(ptrs,keyPtrs->value)){
+                ptrs = insertListNodeVal(ptrs,keyPtrs->value);
+            }
+            free(keyPtrs);
+            keyPtrs = nxtKeyPtr;
+        }
+        free(curKey);
+        curKey = nxtKey;
+    }
 
-    // ListNode* ptrs = getDataBlocks(tree, resultPtr);
-
-    // // delete records.
-    // deleteRecords(ptrs);
+    // delete records.
+    deleteRecords(tree,ptrs,startKey,endKey);
+    
+    free(updateInfo);
+    free(deleteInfo);
 }
 
 /**
@@ -136,20 +163,21 @@ ListNode* getDataBlocks(BTree *tree, double ptr){
  * @param startKey the starting range of keys of records to be deleted.
  * @param endKey the ending range of keys of records to be deleted.
 */
-void deleteRecords(BTree *tree, ListNode *datablockList, double startKey, double endKey){
+void deleteRecords(BTree *tree, ListNode *ptrs, double startKey, double endKey){
     // delete records from data block. 
-    ListNode *curBlock = datablockList, *nxtBlock;
+    ListNode *curBlock = ptrs, *nxtBlock;
     struct Block* block = NULL; 
     while(curBlock!=NULL){
+        ioCount++;
         nxtBlock = curBlock->next;
         // EDIT: STORAGE SIDE NOW: delete record in datablock(curPtr->ptr contains the datablock id)
-        // block = (struct Block*)(uintptr_t)(curBlock->ptr);
-        // for(int i=0;i<MAX_RECORDS;i++){
-        //     struct Record rec = getRecordFromBlock(block, i);
-        //     if(rec.FG_PCT_home <= startKey & rec.FG_PCT_home >= endKey){
-        //         deleteRecord(block,i);
-        //     }
-        // }
+        block = (struct Block*)(uintptr_t)(curBlock->value);
+        for(int i=0;i<MAX_RECORDS;i++){
+            struct Record rec = getRecordFromBlock(block, i);
+            if(rec.FG_PCT_home <= startKey & rec.FG_PCT_home >= endKey){
+                deleteRecord(block,i);
+            }
+        }
         // END OF EDIT. 
         free(curBlock); 
         curBlock = nxtBlock;

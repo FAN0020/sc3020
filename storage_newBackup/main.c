@@ -4,10 +4,12 @@
 #include "disk.h"
 #include "block.h"
 #include "LRUCache.h"
+#include "database.h"
 
 #include "disk.c"
 #include "block.c"
 #include "LRUCache.c"
+#include "database.c"
 #include <stdint.h>
 //#include "common.h"
 #include "BT/bt_page.h"
@@ -87,9 +89,20 @@ int main() {
 
     printf("\n----------------------EXPERIMENT 3-----------------------\n");
 
+
+    printf("\n----------------------EXPERIMENT 5-----------------------\n");
+    // execute the delete.
+    deleteDBRangeKey(tree,0,0.35);
+    printf("Number of nodes of the updated B+ Tree: %d\n",countNode(tree));
+    printf("Number of nodes of the updated B+ Tree: %d\n",countLevel(tree->page, tree->root));
+    printf("Root keys of the updated B+ tree: ");
+    printRootKeys(tree);
+    printf("The running time of the process: %d\n",endT-startT);
+
+
     // free the memory
     freeDisk(disk);
-    return 0;
+    return 0;   
 }
 
 
