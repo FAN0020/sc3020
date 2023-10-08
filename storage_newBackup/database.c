@@ -1,4 +1,4 @@
-#include "bt_mgr.h"
+#include "BT/bt_mgr.h"
 #include "database.h"
 
 #include <stdio.h>
@@ -182,3 +182,115 @@ ListNode* insertListNodeVal(ListNode *list,double newVal){
     return insertNode;
 
 }
+
+double* retrieveAllPointersForKey(BTPage* page, double key, double root) {
+    double* pointers = NULL;  // Initialize the pointer array as NULL
+    int pointerCount = 0;     // Initialize the pointer count as 0
+
+    double nodePtr = root;  // Start from the root node
+
+    while (nodePtr != 0) {
+        int nodeType, index;
+        nodeType = searchPageRecord(page, nodePtr);
+
+        // Non-Leaf node
+        if (nodeType == 1) {
+            NonLeafNode* nlNode = (NonLeafNode*)(uintptr_t)nodePtr;
+            index = searchNonLeafNodeKey(nlNode, key);
+
+            // Find the node with the key and the index pointing
+            printf("Node: %f, Key: %f, NodeType: %d\n", nodePtr, key, nodeType);  // Debug print
+            printf("Index %d\n", index);
+            nodePtr = nlNode->ptrs[index];  // Move to the appropriate child node
+        }
+            // Leaf node
+        else {
+            LeafNode* lNode = (LeafNode*)(uintptr_t)nodePtr;
+            index = searchLeafNodeKey(lNode, key);
+
+            if (index != -1) {
+
+                printf("Node: %f, Key: %f, NodeType: %d\n", nodePtr, key, nodeType);  // Debug print
+                double nextPtr = lNode->ptrs[index];
+                int resultType = searchPageRecord(page, nextPtr);
+
+                if (resultType == 2) { // result points to a single leafNode
+                    struct Record* recordPtr = (struct Record*)(uintptr_t)nextPtr;
+                    pointers[pointerCount++] = nextPtr;
+
+                }
+                else {
+                    printf("HERE\n");
+                    OverflowNode* overflowPtr = (OverflowNode*)(uintptr_t)nextPtr;
+                    for (pointerCount = 0; pointerCount < OVERFLOW_RECS; pointerCount++) {
+                        if (overflowPtr->dataBlocks[pointerCount] != 0) {
+                            pointers[pointerCount] = overflowPtr->dataBlocks[pointerCount];
+                        }
+                    }
+
+                }
+
+                return pointers;
+
+                //printf("Node: %f, Key: %f, NodeType: %d\n", nodePtr, key, nodeType);  // Debug print
+                //
+                //double nextPtr = (())
+                //
+                //double recordPtr = ((LeafNode*)(uintptr_t)nodePtr)->ptrs[index];
+                //float FG3_PCT_home = ((struct Record*)(uintptr_t)recordPtr)->FG3_PCT_home;
+                //printf("Node FG_PCT_3 Value: %f\n", FG3_PCT_home);
+
+
+                // Found the key in the leaf node or its overflow nodes
+                //if (lNode->keys[index] == key) {
+                //    // Allocate memory for the pointers
+                //    int maxPointers = P_REC_COUNT;
+                //    pointers = (double*)malloc(maxPointers * sizeof(double));
+
+                //    /* THROWS ERROR
+                //    //// Get pointers from the current leaf node
+                //    //while (index < maxPointers && lNode->keys[index] == key) {
+                //    //    pointers[pointerCount++] = lNode->ptrs[index];
+                //    //    index++;
+                //    //}
+
+                //    //// Move to the next leaf node (if any)
+                //    //lNode = lNode->next;
+                //    //while (lNode != NULL && lNode->keys[0] == key) {
+                //    //    for (index = 0; index < maxPointers && lNode->keys[index] == key; index++) {
+                //    //        pointers[pointerCount++] = lNode->ptrs[index];
+                //    //    }
+                //    //    lNode = lNode->next;
+                //    //}
+                //    */
+                //    //while (index < maxPointers && lNode->keys[index] == key) {
+                //    //    pointers[pointerCount++] = lNode->ptrs[index];
+                //    //    index++;
+                //    //}
+
+                //    //while (lNode != NULL) {
+                //    //    lNode = lNode->next;
+                //    //    if (lNode != NULL && lNode->keys[0] != key) {
+                //    //        break;  // Exit if the next leaf node has a different key
+                //    //    }
+
+                //    //    for (index = 0; index < maxPointers && lNode->keys[index] == key; index++) {
+                //    //        pointers[pointerCount++] = lNode->ptrs[index];
+                //    //    }
+                //    //}
+
+
+                //    // Return collected pointers and their count
+                //    return pointers;
+                //}
+            }
+
+            // Key not found in this leaf node, move to the next leaf node
+            nodePtr = lNode->ptrs[P_REC_COUNT - 1];
+        }
+    }
+
+    // Return NULL if key not found
+    return pointers;
+}
+

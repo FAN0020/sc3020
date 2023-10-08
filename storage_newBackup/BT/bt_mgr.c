@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <stdint.h>
 /**
  * function to create a B+ Tree
  * @param field the field the records are indexed by. 

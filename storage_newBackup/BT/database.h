@@ -4,7 +4,7 @@
 
 #include "bt_mgr.h"
 #include <string.h>
-
+#include <stdint.h>
 typedef struct _listNode{
     double value; 
     struct _listNode *next;

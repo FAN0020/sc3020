@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <stdint.h>
 /**
  * function to create non-leaf node 
  * @param ptr1 pointer to the first child. 

@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <stdint.h>
 /**
  * A function to delete keys and records in the database 
  * @param tree the tree containing the index

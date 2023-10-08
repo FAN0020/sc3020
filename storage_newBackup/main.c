@@ -8,7 +8,7 @@
 #include "disk.c"
 #include "block.c"
 #include "LRUCache.c"
-
+#include <stdint.h>
 //#include "common.h"
 #include "BT/bt_page.h"
 #include "BT/bt_node.h"
@@ -63,7 +63,7 @@ int main() {
                 insertInfo->key = rec.TEAM_ID_home; // Using TEAM_ID_home as the key
                 //insertInfo->key = rec.FG_PCT_home;
                 //insertInfo->ptr = i; // The pointer in this context can be the block number. Adjust as needed.
-                insertInfo->ptr = (double)(uintptr_t)(Block);
+                insertInfo->ptr = (double)(uintptr_t)(block);
                 printf("Inserting key: %f into the B+ tree...\n", insertInfo->key);
                 insertBTreeKey(tree, insertInfo);
                 printf("Root of the B+ tree after insertion: %f\n", tree->root);
@@ -86,10 +86,7 @@ int main() {
     printf("\n");
 
     printf("\n----------------------EXPERIMENT 3-----------------------\n");
-    search_counter = 0;
-    double something = searchBTreeKey(tree, 0.5);
-    printf("%d", search_counter);
-    
+
     // free the memory
     freeDisk(disk);
     return 0;

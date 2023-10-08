@@ -3,7 +3,7 @@
 
 #include "bt_page.h"
 #include <string.h>
-
+#include <stdint.h>
 // defining fixed variables and global variables
 #define NODE_SIZE 400
 #define N (400-sizeof(double))/(sizeof(double)+sizeof(double))
