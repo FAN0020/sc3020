@@ -67,7 +67,7 @@ void deleteDBRangeKey(BTree *tree, double startKey, double endKey){
         return;
     }
     int foundAllKeys = 0; // binary value of whether all range keys have been retrieved.
-    LeafNode* lNode = (LeafNode*)(uintptr_t)lNode, *curNode; 
+    LeafNode* lNode = (LeafNode*)(uintptr_t)ptr, *curNode; 
     curNode = lNode; 
     // loop through leaf node to find keys within range. 
     while(curNode != NULL & !foundAllKeys){
@@ -75,13 +75,15 @@ void deleteDBRangeKey(BTree *tree, double startKey, double endKey){
         for(int i = 0; i<N; i++){
             if(curNode->keys[i] == -1) break; 
             else if (curNode->keys[i] >= startKey & curNode->keys[i] <= endKey){
-                keys = insertListNodeKey(keys,curNode->keys[i]);
+                keys = insertListNodeVal(keys,curNode->keys[i]);
+                printf("Add key %f \n",keys->value);
             }
             else if (curNode->keys[i] > endKey){
                 foundAllKeys = 1; 
                 break; 
             }
         }
+        curNode = curNode->next;
     }
 
     // retrieve the datablocks
@@ -95,8 +97,10 @@ void deleteDBRangeKey(BTree *tree, double startKey, double endKey){
     // delete keys from BTree and get all datablocks with records. 
     ListNode* curKey = keys, *nxtKey, *nxtKeyPtr; 
     while(curKey != NULL){
+        printf("Current Key: %f \n",curKey->value);
         nxtKey = curKey->next;
         deleteInfo->key = curKey->value;
+        deleteBTreeKey(tree,updateInfo,deleteInfo);
         // find datablocks of each key.
         keyPtrs = getDataBlocks(tree, resultPtr);
         // add pointers of key into the overall list, ptrs.
@@ -104,6 +108,7 @@ void deleteDBRangeKey(BTree *tree, double startKey, double endKey){
             nxtKeyPtr = keyPtrs->next;
             if(!findListNodeVal(ptrs,keyPtrs->value)){
                 ptrs = insertListNodeVal(ptrs,keyPtrs->value);
+                printf("Add datablock %f \n",keyPtrs->value);
             }
             free(keyPtrs);
             keyPtrs = nxtKeyPtr;
@@ -140,8 +145,8 @@ ListNode* getDataBlocks(BTree *tree, double ptr){
             nextNode = curNode->next;
             for(int i=0; i<OVERFLOW_RECS ;i++){
                 // if valid datablock and datablock not in list, add into list.
-                if(curNode->dataBlocks[i] != -1 & !findListNodePtr(ptrs, curNode->dataBlocks[i])){
-                    ptrs = insertListNodePtr(ptrs,curNode->dataBlocks[i]);
+                if(curNode->dataBlocks[i] != -1 & !findListNodeVal(ptrs, curNode->dataBlocks[i])){
+                    ptrs = insertListNodeVal(ptrs,curNode->dataBlocks[i]);
                 }
             }
             deleteOverflowNode(tree->page,curNode,curNode); // delete overflow node.
@@ -150,7 +155,7 @@ ListNode* getDataBlocks(BTree *tree, double ptr){
     }
     // enter lone datablock into list
     else{
-        insertListNodePtr(ptrs,resultPtr);
+        insertListNodeVal(ptrs,resultPtr);
     }
 
     return ptrs; 
@@ -194,7 +199,7 @@ double findListNodeVal(ListNode *list, double findval){
     if(list == NULL) return 0; 
     else{
         if(list->value == findval) return 1;
-        else findListNodePtr(list->next, findval);
+        else findListNodeVal(list->next, findval);
     }
 }
 

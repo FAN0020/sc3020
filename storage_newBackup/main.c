@@ -62,8 +62,8 @@ int main() {
             
             for (int j = 0; j < numberOfRecordsInBlock; j++) {
                 struct Record rec = getRecordFromBlock(block, j);
-                insertInfo->key = rec.TEAM_ID_home; // Using TEAM_ID_home as the key
-                //insertInfo->key = rec.FG_PCT_home;
+                //insertInfo->key = rec.TEAM_ID_home; // Using TEAM_ID_home as the key
+                insertInfo->key = rec.FG_PCT_home;
                 //insertInfo->ptr = i; // The pointer in this context can be the block number. Adjust as needed.
                 insertInfo->ptr = (double)(uintptr_t)(block);
                 printf("Inserting key: %f into the B+ tree...\n", insertInfo->key);

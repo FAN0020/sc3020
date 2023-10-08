@@ -789,7 +789,7 @@ int deleteKey(BTPage *page,double root, double nodePtr,DeleteNode* deleteNode, U
         // go deeper into the tree 
         index = searchLeafNodeKey(lNode,deleteNode->key);
         if(index == -1){
-            printf("There are no records with key %f\n");
+            printf("There are no records with key %f\n",deleteNode->key);
             resultPtr = -1; 
         }
         // skip depth if whole key is to be deleted.
