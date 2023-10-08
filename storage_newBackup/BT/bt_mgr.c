@@ -80,7 +80,7 @@ void deleteBTree(BTree* tree){
                 free((OverflowNode*)(uintptr_t)(page->pointers[i]));
             }
         }
-        deletePage(page);
+        free(page);
         page = newPage;
     }
     // delete tree.
