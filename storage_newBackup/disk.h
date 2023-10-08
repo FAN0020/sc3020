@@ -51,6 +51,7 @@ struct Block* getBlock(struct Disk* disk, int blockNumber);
 int getBlockAccessReduced(struct Disk* disk);
 void deleteRecord(struct Block* block, int offset);
 int runBruteForceSearch(struct Disk* disk, double FG_PCT_homeValue, double FG_PCT_homeValueUpperRange);
+int runBruteForceDelete(struct Disk* disk, double FG_PCT_homeValue, double FG_PCT_homeValueUpperRange);
 void freeDisk(struct Disk* disk);
 int loadDataIntoDisk(struct Disk* disk);
 struct Disk* loadData(struct Disk* disk, const char* filename);

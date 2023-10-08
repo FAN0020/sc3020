@@ -10,9 +10,160 @@
 
 // functions 
 
-int bruteForceScan(struct Disk *disk, double lowerRange, double upperRange){
+/**
+ * A function to retrieve list of datablocks of a key.
+ * @param tree the index tree of the database. 
+ * @param key the key of the records we are trying to retrieve.
+ * @return returns the linked list of the datablocks
+*/
+ListNode* searchDBKey(BTree *tree, double key){
+    ioCount = 0;
+    startT=clock(); // start time
+    // retrieve datablocks.
+    double ptr = searchBTreeKey(tree,key);
+    ListNode* dataPtrs = getDataBlocks(tree,ptr), *nxtPtr;
+    endT=clock(); // end time
+    return dataPtrs;
+}
+
+/**
+ * A function to retrieve list of datablocks of a range of key
+ * @param tree the index tree of the database. 
+ * @param lowerRange lowerRange of the keys of records to retrieve.
+ * @param upperRange upperRange of the keys of records to retrieve.
+ * @return returns the linked list of the datablocks
+*/
+ListNode* searchDBRangeKey(BTree *tree, double lowerRange, double upperRange){
+    ioCount = 0;
+    startT=clock(); // start time
+    // retrieve datablocks.
+    double ptr = searchBTreeRangeKey(tree,lowerRange);
+
+    int nodeType = searchPageRecord(tree->page, ptr);
+    if (nodeType != 2) {
+        printf("No records found.\n");
+        return NULL;
+    }
+    ListNode* ptrs = NULL; 
+    int foundAllKeys = 0; // binary value of whether all range keys have been retrieved.
+    LeafNode* lNode = (LeafNode*)(uintptr_t)ptr, *curNode; 
+    curNode = lNode; 
+    // loop through leaf node to find keys within range and get their pointer
+    while(curNode != NULL & !foundAllKeys){
+        ioCount++;
+        for(int i = 0; i<N; i++){
+            if(curNode->keys[i] == -1) break; 
+            else if (curNode->keys[i] >= lowerRange & curNode->keys[i] <= upperRange){
+                ptrs = insertListNodeVal(ptrs,curNode->ptrs[i]);
+            }
+            else if (curNode->keys[i] > upperRange){
+                foundAllKeys = 1; 
+                break; 
+            }
+        }
+        curNode = curNode->next;
+    }
+
+    // get datablock pointers.
+    ListNode *dataPtrs=NULL, *curPtr = ptrs, *nxtPtr = NULL, *keyPtrs = NULL,*nxtKeyPtr=NULL; 
+    while(curPtr != NULL){
+        nxtPtr = curPtr->next;
+
+        // find datablocks of each key.
+        keyPtrs = getDataBlocks(tree, curPtr->value);
+
+        // add pointers of key into the overall list, dataPtrs.
+        while(keyPtrs != NULL){
+            nxtKeyPtr = keyPtrs->next;
+            if(findListNodeVal(dataPtrs,keyPtrs->value) == 0){
+                dataPtrs = insertListNodeVal(dataPtrs,keyPtrs->value);
+            }
+            free(keyPtrs);
+            keyPtrs = nxtKeyPtr;
+        }
+        free(curPtr);
+        curPtr = nxtPtr;
+    }
+    endT=clock(); // end time
+    return dataPtrs;
+}
+
+/**
+ * A function to retrieve records of a key. 
+ * @param dataPtrs linkedlist of all the datablocks containing the records. 
+ * @param lowerRange lowerRange of the keys of records to retrieve.
+ * @param upperRange upperRange of the keys of records to retrieve.
+ * @return returns the linked list of the records.
+*/
+RecordNode* retrieveRecords(ListNode* dataPtrs, double lowerRange, double upperRange){
+    ioCount = 0;
+    startT=clock(); // start time
+    // retrueve records from datablocks.
+    RecordNode *records = NULL, *newRecord; 
+    ListNode *nxtPtr;
+    while(dataPtrs != NULL){
+        ioCount++; // count the datablocks accessed. 
+        nxtPtr = dataPtrs->next;
+        struct Block* block = (struct Block*)(uintptr_t)(dataPtrs->value);
+        // retrieve records within range.
+        for(int i=0;i<MAX_RECORDS;i++){
+            struct Record rec = getRecordFromBlock(block, i);
+            if(lowerRange <= rec.FG_PCT_home & rec.FG_PCT_home<= upperRange){
+                newRecord = (RecordNode*)malloc(sizeof(RecordNode));
+                newRecord->record = rec; 
+                newRecord->next = records; 
+                records = newRecord;
+            }
+        }
+        free(dataPtrs);
+        dataPtrs = nxtPtr;
+    }
+    endT=clock(); // end time
+    return records;
+}
+
+/**
+ * A function to simulate bruteforce search
+ * @param disk object that contains all the data. 
+ * @param lowerRange the lower range of the search keys. 
+ * @param upperRange the upper range of the search keys. 
+ * @return returns the number of blocks accessed. 
+*/
+int bruteForceSearch(struct Disk *disk, double lowerRange, double upperRange){
+    startT=clock();
+    int count = runBruteForceSearch(disk,lowerRange,upperRange);
+    endT=clock();
+    return count; 
+}
+
+/**
+ * A function to calculate average of the FG3_PCT_home
+ * @param records list of records retrieved previously to apply function to. 
+ * @return the average value.
+*/
+double calculateAverage(RecordNode* records){
+    double count=0, sum=0;
+    RecordNode* nxtRec;
+    while(records!=NULL){
+        nxtRec = records->next;
+        sum += (records->record).FG3_PCT_home;
+        count++; 
+        free(records);
+        records = nxtRec; 
+    }
+    return (sum/count);
+}
+
+/**
+ * A function to simulate bruteforce deletion.
+ * @param disk object that contains all the data. 
+ * @param lowerRange the lower range of the search keys. 
+ * @param upperRange the upper range of the search keys. 
+ * @return returns the number of blocks accessed. 
+*/
+int bruteForceDelete(struct Disk *disk, double lowerRange, double upperRange){
     startT = clock();
-    int count = runBruteForceSearch(disk,lowerRange, upperRange);
+    int count = runBruteForceDelete(disk,lowerRange, upperRange);
     endT=clock();
     return count;
 }
@@ -42,7 +193,7 @@ void deleteDBKey(BTree *tree, double key){
     }
 
     // get datablocks of corresponding key.
-    ListNode* ptrs = getDataBlocks(tree, resultPtr);
+    ListNode* ptrs = getDataBlocksAndDelete(tree, resultPtr);
 
     // delete records.
     deleteRecords(tree,ptrs,key,key);
@@ -58,6 +209,7 @@ void deleteDBKey(BTree *tree, double key){
  * 
 */
 void deleteDBRangeKey(BTree *tree, double startKey, double endKey){
+    ioCount=0;
     startT = clock();
     // get the keys within the range.
     ListNode* keys = NULL, *ptrs = NULL, *keyPtrs = NULL; 
@@ -104,7 +256,7 @@ void deleteDBRangeKey(BTree *tree, double startKey, double endKey){
         deleteBTreeKey(tree,updateInfo,deleteInfo);
 
         // find datablocks of each key.
-        keyPtrs = getDataBlocks(tree, resultPtr);
+        keyPtrs = getDataBlocksAndDelete(tree, resultPtr);
 
         // add pointers of key into the overall list, ptrs.
         while(keyPtrs != NULL){
@@ -130,12 +282,51 @@ void deleteDBRangeKey(BTree *tree, double startKey, double endKey){
 }
 
 /**
- * A function to get the datablocks containing data records to be deleted. 
+ * A function to get the datablocks containing data records. 
  * @param tree the tree containing the records. 
  * @param ptr the pointer to the datablocks found in the B+ tree (either a datablock pointer or an overflow node pointer)
  * @return returns the list of datablocks.
 */
 ListNode* getDataBlocks(BTree *tree, double ptr){
+    // creating list of datablocks to delete records from.
+    ListNode *ptrs = NULL; // linked list storing all the keys.
+
+    // retrieve all ptrs and deleting the overflow node after.
+    int nodeType = searchPageRecord(tree->page,ptr);
+    if(nodeType == 3){
+        OverflowNode *curNode = (OverflowNode*)(uintptr_t)ptr;
+        while(curNode != NULL){
+            // update IO count for accessing the overflow nodes. 
+            ioCount++; 
+            // add datablocks into the list.
+            for(int i=0; i<OVERFLOW_RECS ;i++){
+                // if valid datablock and datablock not in list, add into list.
+                if(curNode->dataBlocks[i] != -1){ 
+                    if(findListNodeVal(ptrs, curNode->dataBlocks[i])==0){
+                        ptrs = insertListNodeVal(ptrs,curNode->dataBlocks[i]);
+                    }
+                }
+            }
+            curNode=curNode->next;
+        }
+    }
+    // enter lone datablock into list
+    else{
+        ptrs = insertListNodeVal(ptrs,ptr);
+    }
+
+
+    return ptrs; 
+}
+
+
+/**
+ * A function to get the datablocks containing data records to be deleted and delete the overflow nodes.
+ * @param tree the tree containing the records. 
+ * @param ptr the pointer to the datablocks found in the B+ tree (either a datablock pointer or an overflow node pointer)
+ * @return returns the list of datablocks.
+*/
+ListNode* getDataBlocksAndDelete(BTree *tree, double ptr){
     // creating list of datablocks to delete records from.
     ListNode *ptrs = NULL; // linked list storing all the keys.
 
@@ -187,7 +378,7 @@ void deleteRecords(BTree *tree, ListNode *ptrs, double startKey, double endKey){
         block = (struct Block*)(uintptr_t)(curBlock->value);
         for(int i=0;i<MAX_RECORDS;i++){
             struct Record rec = getRecordFromBlock(block, i);
-            if(rec.FG_PCT_home <= startKey & rec.FG_PCT_home >= endKey){
+            if(startKey <= rec.FG_PCT_home & rec.FG_PCT_home <= endKey){
                 deleteRecord(block,i);
             }
         }

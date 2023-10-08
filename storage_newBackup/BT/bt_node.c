@@ -946,6 +946,7 @@ int search_counter = 0;
 
 double searchKey(BTPage *page, double node, double key){
     (*(&search_counter))++;
+    ioCount++;
     double result = 0;
     int nodeType, index;
     nodeType = searchPageRecord(page,node);
