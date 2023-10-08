@@ -54,8 +54,6 @@ typedef struct _insertnode{
 typedef struct _deletenode{
     double key;
     double ptr; 
-    double oldKey;
-    double newKey; 
 }DeleteNode; 
 
 typedef struct _updateNode{
