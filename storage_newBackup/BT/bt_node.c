@@ -170,7 +170,8 @@ int deleteNLNodeKey(NonLeafNode* node, double delKey){
 */
 int deleteNonLeafNodeKey(BTPage *page, double root,UpdateNode* updateInfo ,DeleteNode* deleteNode){
     // delete key first.
-    int toUpdate = 0, isInvalid, key;
+    int toUpdate = 0, isInvalid;
+    double key;
     // delete key and update tree keys. 
     NonLeafNode *cNode = (NonLeafNode*)(uintptr_t)(updateInfo->cNode);
     key = retrieveNonLeafLowerboundKey(page,updateInfo->cNode); // get old key.
@@ -424,12 +425,13 @@ int deleteLNodeKey(LeafNode* node, double delKey){
 */
 int deleteLeafNodeKey(double root, UpdateNode* updateInfo, DeleteNode* deleteNode){
     // delete key first.
-    int toUpdate = 0, isInvalid, key;
+    int toUpdate = 0, isInvalid;
+    double key;
     // delete key and update tree keys. 
     LeafNode *cNode = (LeafNode*)(uintptr_t)(updateInfo->cNode);
     key = cNode->keys[0]; // get old key.
     isInvalid = deleteLNodeKey(cNode,deleteNode->key);
-    if(updateInfo->cNode != root){
+    if(updateInfo->cNode != root & updateInfo->lNode != -1){
         UpdateLowerboundKeys(root, key,cNode->keys[0]);
     }
     // balance. 

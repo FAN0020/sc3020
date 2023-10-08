@@ -1,11 +1,11 @@
-#include "bt_page.h"
-#include "bt_node.h"
-#include "bt_mgr.h"
+#include "BT/bt_page.h"
+#include "BT/bt_node.h"
+#include "BT/bt_mgr.h"
 #include "database.h"
 
-#include "bt_page.c"
-#include "bt_node.c"
-#include "bt_mgr.c"
+#include "BT/bt_page.c"
+#include "BT/bt_node.c"
+#include "BT/bt_mgr.c"
 #include "database.c"
 
 #include <stdio.h>
@@ -91,16 +91,16 @@ int main(){
     printRootKeys(testTree);
 
     UpdateNode *update = (UpdateNode*) malloc(sizeof(UpdateNode));
-    DeleteNode *deleteNode = (DeleteNode*)malloc(sizeof(DeleteNode)); 
+    DeleteNode *delete = (DeleteNode*)malloc(sizeof(DeleteNode)); 
 
     printf("DELETE\n");
     // for(int i=30; i<37;i++)
     // {
-        deleteNode->key = 1; 
-        deleteNode->ptr = -2; 
-        deleteBTreeKey(testTree,update,deleteNode);
+        // delete->key = 1; 
+        // delete->ptr = -2; 
+        //deleteBTreeKey(testTree,update,delete);
         ioCount = 0; 
-        // deleteDBKey(testTree, 1);
+        deleteDBKey(testTree, 1);
 
         printRootKeys(testTree);
         printf("%f \n",resultPtr);

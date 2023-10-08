@@ -25,7 +25,7 @@ int main() {
     //create a Disk
     int diskSize = 500 * 1024 * 1024; // 500 MB
     int blkSize = 400; // 400 B
-    int lruCacheSize = 50; // Example size
+    int lruCacheSize = 50 * 1024 * 1024; // Example size
     struct Disk* disk = createDisk(diskSize, blkSize, lruCacheSize);
 
     //Load the data
@@ -71,7 +71,7 @@ int main() {
                 printf("Root of the B+ tree after insertion: %f\n", tree->root);
 
                 printf("%f, %f\n",insertInfo->key, insertInfo->ptr);
-}
+            }
         }
         if(counter == getNumberBlockUsed(disk)) break;
     }
@@ -97,7 +97,10 @@ int main() {
     printf("Number of nodes of the updated B+ Tree: %d\n",countLevel(tree->page, tree->root));
     printf("Root keys of the updated B+ tree: ");
     printRootKeys(tree);
-    printf("The running time of the process: %d\n",endT-startT);
+    printf("The running time of the process: %lu, (IO count = %d)\n",endT-startT,ioCount);
+
+    printf("Number of datablock accessed by a brute-force method: %d\n",bruteForceScan(disk,0,0.35));
+    printf("The running time of the process: %lu\n",endT-startT);
 
 
     // free the memory

@@ -10,6 +10,13 @@
 
 // functions 
 
+int bruteForceScan(struct Disk *disk, double lowerRange, double upperRange){
+    startT = clock();
+    int count = runBruteForceSearch(disk,lowerRange, upperRange);
+    endT=clock();
+    return count;
+}
+
 /**
  * A function to delete keys and records in the database 
  * @param tree the tree containing the index
@@ -37,13 +44,6 @@ void deleteDBKey(BTree *tree, double key){
     // get datablocks of corresponding key.
     ListNode* ptrs = getDataBlocks(tree, resultPtr);
 
-    printf("Datablock List\n");
-    ListNode* curPtr = ptrs;
-    while(curPtr!=NULL){
-        printf("%f ", curPtr->value);
-        curPtr=curPtr->next;
-    }
-    printf("\n");
     // delete records.
     deleteRecords(tree,ptrs,key,key);
     
@@ -58,6 +58,7 @@ void deleteDBKey(BTree *tree, double key){
  * 
 */
 void deleteDBRangeKey(BTree *tree, double startKey, double endKey){
+    startT = clock();
     // get the keys within the range.
     ListNode* keys = NULL, *ptrs = NULL, *keyPtrs = NULL; 
     double ptr = searchBTreeRangeKey(tree,startKey); // get first leaf node containing range keys.
@@ -76,7 +77,6 @@ void deleteDBRangeKey(BTree *tree, double startKey, double endKey){
             if(curNode->keys[i] == -1) break; 
             else if (curNode->keys[i] >= startKey & curNode->keys[i] <= endKey){
                 keys = insertListNodeVal(keys,curNode->keys[i]);
-                printf("Add key %f \n",keys->value);
             }
             else if (curNode->keys[i] > endKey){
                 foundAllKeys = 1; 
@@ -95,33 +95,38 @@ void deleteDBRangeKey(BTree *tree, double startKey, double endKey){
     UpdateNode *updateInfo = (UpdateNode*) malloc(sizeof(UpdateNode));
 
     // delete keys from BTree and get all datablocks with records. 
-    ListNode* curKey = keys, *nxtKey, *nxtKeyPtr; 
+    ListNode *curKey = keys, *nxtKey = NULL, *nxtKeyPtr=NULL; 
     while(curKey != NULL){
-        printf("Current Key: %f \n",curKey->value);
+        
         nxtKey = curKey->next;
         deleteInfo->key = curKey->value;
+        deleteInfo->ptr = -2; 
         deleteBTreeKey(tree,updateInfo,deleteInfo);
+
         // find datablocks of each key.
         keyPtrs = getDataBlocks(tree, resultPtr);
+
         // add pointers of key into the overall list, ptrs.
         while(keyPtrs != NULL){
             nxtKeyPtr = keyPtrs->next;
-            if(!findListNodeVal(ptrs,keyPtrs->value)){
+            if(findListNodeVal(ptrs,keyPtrs->value) == 0){
                 ptrs = insertListNodeVal(ptrs,keyPtrs->value);
-                printf("Add datablock %f \n",keyPtrs->value);
             }
             free(keyPtrs);
             keyPtrs = nxtKeyPtr;
         }
+        
         free(curKey);
         curKey = nxtKey;
     }
+    
 
     // delete records.
     deleteRecords(tree,ptrs,startKey,endKey);
     
     free(updateInfo);
     free(deleteInfo);
+    endT = clock();
 }
 
 /**
@@ -145,8 +150,10 @@ ListNode* getDataBlocks(BTree *tree, double ptr){
             nextNode = curNode->next;
             for(int i=0; i<OVERFLOW_RECS ;i++){
                 // if valid datablock and datablock not in list, add into list.
-                if(curNode->dataBlocks[i] != -1 & !findListNodeVal(ptrs, curNode->dataBlocks[i])){
-                    ptrs = insertListNodeVal(ptrs,curNode->dataBlocks[i]);
+                if(curNode->dataBlocks[i] != -1){ 
+                    if(findListNodeVal(ptrs, curNode->dataBlocks[i])==0){
+                        ptrs = insertListNodeVal(ptrs,curNode->dataBlocks[i]);
+                    }
                 }
             }
             deleteOverflowNode(tree->page,curNode,curNode); // delete overflow node.
@@ -155,8 +162,9 @@ ListNode* getDataBlocks(BTree *tree, double ptr){
     }
     // enter lone datablock into list
     else{
-        insertListNodeVal(ptrs,resultPtr);
+        ptrs = insertListNodeVal(ptrs,ptr);
     }
+
 
     return ptrs; 
 }
@@ -199,7 +207,7 @@ double findListNodeVal(ListNode *list, double findval){
     if(list == NULL) return 0; 
     else{
         if(list->value == findval) return 1;
-        else findListNodeVal(list->next, findval);
+        else return findListNodeVal(list->next, findval);
     }
 }
 
