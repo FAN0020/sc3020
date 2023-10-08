@@ -1,0 +1,41 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/fanyupei/Codes/sc3020/merge_pheobe/b+tree/deleteTest'
+relocations:
+  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: _createPage, symObjAddr: 0x0, symBinAddr: 0x100000FE0, symSize: 0x84 }
+  - { offsetInCU: 0x297, offset: 0x297, size: 0x8, addend: 0x0, symName: _createPage, symObjAddr: 0x0, symBinAddr: 0x100000FE0, symSize: 0x84 }
+  - { offsetInCU: 0x2CD, offset: 0x2CD, size: 0x8, addend: 0x0, symName: _deletePage, symObjAddr: 0x84, symBinAddr: 0x100001064, symSize: 0x74 }
+  - { offsetInCU: 0x329, offset: 0x329, size: 0x8, addend: 0x0, symName: _insertPageRecord, symObjAddr: 0xF8, symBinAddr: 0x1000010D8, symSize: 0xE0 }
+  - { offsetInCU: 0x3A1, offset: 0x3A1, size: 0x8, addend: 0x0, symName: _deletePageRecord, symObjAddr: 0x1D8, symBinAddr: 0x1000011B8, symSize: 0x170 }
+  - { offsetInCU: 0x3F3, offset: 0x3F3, size: 0x8, addend: 0x0, symName: _searchPageRecord, symObjAddr: 0x348, symBinAddr: 0x100001328, symSize: 0xE4 }
+  - { offsetInCU: 0x445, offset: 0x445, size: 0x8, addend: 0x0, symName: _createNonleafNode, symObjAddr: 0x42C, symBinAddr: 0x10000140C, symSize: 0xB4 }
+  - { offsetInCU: 0x4A5, offset: 0x4A5, size: 0x8, addend: 0x0, symName: _insertNonLeafNodeKey, symObjAddr: 0x4E0, symBinAddr: 0x1000014C0, symSize: 0x288 }
+  - { offsetInCU: 0x521, offset: 0x521, size: 0x8, addend: 0x0, symName: _deleteNLNodeKey, symObjAddr: 0x768, symBinAddr: 0x100001748, symSize: 0x120 }
+  - { offsetInCU: 0x565, offset: 0x565, size: 0x8, addend: 0x0, symName: _insertNLNodeKey, symObjAddr: 0x888, symBinAddr: 0x100001868, symSize: 0x190 }
+  - { offsetInCU: 0x5CF, offset: 0x5CF, size: 0x8, addend: 0x0, symName: _searchNonLeafNodeKey, symObjAddr: 0xA18, symBinAddr: 0x1000019F8, symSize: 0x98 }
+  - { offsetInCU: 0x613, offset: 0x613, size: 0x8, addend: 0x0, symName: _searchNonLeafNode, symObjAddr: 0xAB0, symBinAddr: 0x100001A90, symSize: 0xA4 }
+  - { offsetInCU: 0x657, offset: 0x657, size: 0x8, addend: 0x0, symName: _deleteNonLeafNodeKey, symObjAddr: 0xB54, symBinAddr: 0x100001B34, symSize: 0x438 }
+  - { offsetInCU: 0x756, offset: 0x756, size: 0x8, addend: 0x0, symName: _retrieveNonLeafLowerboundKey, symObjAddr: 0xF8C, symBinAddr: 0x100001F6C, symSize: 0xAC }
+  - { offsetInCU: 0x7D8, offset: 0x7D8, size: 0x8, addend: 0x0, symName: _UpdateLowerboundKeys, symObjAddr: 0x1038, symBinAddr: 0x100002018, symSize: 0xD4 }
+  - { offsetInCU: 0x848, offset: 0x848, size: 0x8, addend: 0x0, symName: _deleteNonLeafNode, symObjAddr: 0x110C, symBinAddr: 0x1000020EC, symSize: 0x34 }
+  - { offsetInCU: 0x87E, offset: 0x87E, size: 0x8, addend: 0x0, symName: _createLeafNode, symObjAddr: 0x1140, symBinAddr: 0x100002120, symSize: 0xA8 }
+  - { offsetInCU: 0x8D5, offset: 0x8D5, size: 0x8, addend: 0x0, symName: _insertLeafNodeKey, symObjAddr: 0x11E8, symBinAddr: 0x1000021C8, symSize: 0x1D8 }
+  - { offsetInCU: 0x93B, offset: 0x93B, size: 0x8, addend: 0x0, symName: _insertLNodeKey, symObjAddr: 0x13C0, symBinAddr: 0x1000023A0, symSize: 0x148 }
+  - { offsetInCU: 0x99C, offset: 0x99C, size: 0x8, addend: 0x0, symName: _deleteLNodeKey, symObjAddr: 0x1508, symBinAddr: 0x1000024E8, symSize: 0x104 }
+  - { offsetInCU: 0x9E4, offset: 0x9E4, size: 0x8, addend: 0x0, symName: _searchLeafNodeKey, symObjAddr: 0x160C, symBinAddr: 0x1000025EC, symSize: 0x80 }
+  - { offsetInCU: 0xA3A, offset: 0xA3A, size: 0x8, addend: 0x0, symName: _searchLeafNode, symObjAddr: 0x168C, symBinAddr: 0x10000266C, symSize: 0x8C }
+  - { offsetInCU: 0xA82, offset: 0xA82, size: 0x8, addend: 0x0, symName: _deleteLeafNodeKey, symObjAddr: 0x1718, symBinAddr: 0x1000026F8, symSize: 0x3A8 }
+  - { offsetInCU: 0xB7D, offset: 0xB7D, size: 0x8, addend: 0x0, symName: _deleteLeafNode, symObjAddr: 0x1AC0, symBinAddr: 0x100002AA0, symSize: 0x34 }
+  - { offsetInCU: 0xBB6, offset: 0xBB6, size: 0x8, addend: 0x0, symName: _createOverflowNode, symObjAddr: 0x1AF4, symBinAddr: 0x100002AD4, symSize: 0x84 }
+  - { offsetInCU: 0xBFE, offset: 0xBFE, size: 0x8, addend: 0x0, symName: _insertOverflowRecord, symObjAddr: 0x1B78, symBinAddr: 0x100002B58, symSize: 0x124 }
+  - { offsetInCU: 0xC71, offset: 0xC71, size: 0x8, addend: 0x0, symName: _lastOverflowNode, symObjAddr: 0x1C9C, symBinAddr: 0x100002C7C, symSize: 0x58 }
+  - { offsetInCU: 0xC9B, offset: 0xC9B, size: 0x8, addend: 0x0, symName: _CheckOverflowNode, symObjAddr: 0x1CF4, symBinAddr: 0x100002CD4, symSize: 0xDC }
+  - { offsetInCU: 0xD00, offset: 0xD00, size: 0x8, addend: 0x0, symName: _deleteOverflowRecord, symObjAddr: 0x1DD0, symBinAddr: 0x100002DB0, symSize: 0x1A4 }
+  - { offsetInCU: 0xD9F, offset: 0xD9F, size: 0x8, addend: 0x0, symName: _insertKey, symObjAddr: 0x1F74, symBinAddr: 0x100002F54, symSize: 0x304 }
+  - { offsetInCU: 0xEB4, offset: 0xEB4, size: 0x8, addend: 0x0, symName: _deleteKey, symObjAddr: 0x2278, symBinAddr: 0x100003258, symSize: 0x330 }
+  - { offsetInCU: 0xFAD, offset: 0xFAD, size: 0x8, addend: 0x0, symName: _getNodes, symObjAddr: 0x25A8, symBinAddr: 0x100003588, symSize: 0x2C4 }
+  - { offsetInCU: 0x10E1, offset: 0x10E1, size: 0x8, addend: 0x0, symName: _createTree, symObjAddr: 0x286C, symBinAddr: 0x10000384C, symSize: 0x54 }
+  - { offsetInCU: 0x1117, offset: 0x1117, size: 0x8, addend: 0x0, symName: _insertBTreeKey, symObjAddr: 0x28C0, symBinAddr: 0x1000038A0, symSize: 0xD0 }
+  - { offsetInCU: 0x1173, offset: 0x1173, size: 0x8, addend: 0x0, symName: _deleteBTreeKey, symObjAddr: 0x2990, symBinAddr: 0x100003970, symSize: 0x8C }
+  - { offsetInCU: 0x11CF, offset: 0x11CF, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x2A1C, symBinAddr: 0x1000039FC, symSize: 0x504 }
+...

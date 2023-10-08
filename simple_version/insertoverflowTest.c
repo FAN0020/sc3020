@@ -14,7 +14,6 @@
 // functions 
 int main(){
     char field[20] = "test";
-    BTPage* page = createPage();
     BTree* testTree = createTree(field);
     InsertNode* insertNode = (InsertNode*) malloc(sizeof(InsertNode));
     NonLeafNode* root;
@@ -25,8 +24,8 @@ int main(){
         printf("i = %d \n",i);
         insertNode->key = 3;
         insertNode->ptr = i; 
-        insertBTreeKey(page,testTree,insertNode);
-        if(searchPageRecord(page,testTree->root) == 2){
+        insertBTreeKey(testTree,insertNode);
+        if(searchPageRecord(testTree->page,testTree->root) == 2){
             child = (LeafNode*)(uintptr_t)testTree->root;
             for(int j=0;j<N;j++){
                 printf("%.0f ",child->ptrs[j]);
@@ -53,5 +52,33 @@ int main(){
     for(int j=0;j<OVERFLOW_RECS;j++){
         printf("%.0f ",overflow->dataBlocks[j]);
     }
+
+    printRootKeys(testTree);
+
+    UpdateNode *update = (UpdateNode*) malloc(sizeof(UpdateNode));
+    DeleteNode *delete = (DeleteNode*)malloc(sizeof(DeleteNode)); 
+
+    printf("DELETE\n");
+    for(int i=30; i<37;i++)
+    {
+        delete->key = 3; 
+        delete->ptr = i; 
+        deleteBTreeKey(testTree,update,delete);
+
+        printRootKeys(testTree);
+        printf("%f \n",resultPtr);
+
+        overflow = (OverflowNode*)(uintptr_t)(child->ptrs[0]);
+        for(int j=0;j<OVERFLOW_RECS;j++){
+            printf("%.0f ",overflow->dataBlocks[j]);
+        } 
+        printf("\n");
+
+        if(overflow->next == NULL) printf("Null block");
+
+    }
+
+
+    
 
 }
