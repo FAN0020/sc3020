@@ -124,6 +124,7 @@ int main() {
 
 
     // free the memory
+    deleteBTree(tree);
     freeDisk(disk);
     return 0;   
 }
