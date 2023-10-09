@@ -88,23 +88,25 @@ int main() {
 
     printf("\n----------------------EXPERIMENT 3-----------------------\n");
     ListNode* dataPtrs = searchDBKey(tree,0.5);
+    clock_t retrieveDataBlockT = endT - startT; 
     printf("Number of index nodes the process accessed: %d\n",ioCount);
     RecordNode* records = retrieveRecords(dataPtrs,0.5,0.5);
-    clock_t retrievalT = endT - startT; 
+    clock_t retrieveRecordsT = endT - startT; 
     printf("Number of datablocks the process accessed: %d\n",ioCount);
     printf("The average of 'FG3_PCT_home' of the records: %f\n",calculateAverage(records));
-    printf("The running time of the retrieval process(B+ Tree): %lu\n",retrievalT);
+    printf("The running time of the retrieval process(B+ Tree): %lu\n",retrieveDataBlockT+retrieveRecordsT);
     printf("Number of datablocks the process accessed by brute-force: %d\n",bruteForceSearch(disk,0.5,0.5));
     printf("The running time of the retrieval process(brute-force): %lu\n",endT-startT);
     
     printf("\n----------------------EXPERIMENT 4-----------------------\n");
     dataPtrs = searchDBRangeKey(tree,0.6,1);
+    retrieveDataBlockT = endT - startT; 
     printf("Number of index nodes the process accessed: %d\n",ioCount);
     records = retrieveRecords(dataPtrs,0.6,1);
-    retrievalT = endT - startT; 
+    retrieveRecordsT = endT - startT; 
     printf("Number of datablocks the process accessed: %d\n",ioCount);
     printf("The average of 'FG3_PCT_home' of the records: %f\n",calculateAverage(records));
-    printf("The running time of the retrieval process(B+ Tree): %lu\n",retrievalT);
+    printf("The running time of the retrieval process(B+ Tree): %lu\n",retrieveDataBlockT+retrieveRecordsT);
     printf("Number of datablocks the process accessed by brute-force: %d\n",bruteForceSearch(disk,0.6,1));
     printf("The running time of the retrieval process(brute-force): %lu\n",endT-startT);
     
