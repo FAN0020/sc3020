@@ -198,7 +198,7 @@ struct Disk* loadData(struct Disk* disk, const char* filename) {
         sscanf(line, "%d/%d/%d %d %d %f %f %f %d %d %s", &day, &month, &year, &record.TEAM_ID_home,
                &record.PTS_home, &record.FG_PCT_home, &record.FT_PCT_home,
                &record.FG3_PCT_home, &record.AST_home, &record.REB_home,
-               &record.HOME_TEAM_WINS);
+               (char*) & record.HOME_TEAM_WINS);
         record.GAME_DATE_EST = (year * 10000) + (month * 100) + day;
 
         if (currentBlock->curRecords >= (int)(MAX_RECORDS)) {
