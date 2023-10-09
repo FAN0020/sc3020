@@ -170,7 +170,8 @@ int deleteNLNodeKey(NonLeafNode* node, double delKey){
 */
 int deleteNonLeafNodeKey(BTPage *page, double root,UpdateNode* updateInfo ,DeleteNode* deleteNode){
     // delete key first.
-    int toUpdate = 0, isInvalid, key;
+    int toUpdate = 0, isInvalid;
+    double key;
     // delete key and update tree keys. 
     NonLeafNode *cNode = (NonLeafNode*)(uintptr_t)(updateInfo->cNode);
     key = retrieveNonLeafLowerboundKey(page,updateInfo->cNode); // get old key.
@@ -424,12 +425,13 @@ int deleteLNodeKey(LeafNode* node, double delKey){
 */
 int deleteLeafNodeKey(double root, UpdateNode* updateInfo, DeleteNode* deleteNode){
     // delete key first.
-    int toUpdate = 0, isInvalid, key;
+    int toUpdate = 0, isInvalid;
+    double key;
     // delete key and update tree keys. 
     LeafNode *cNode = (LeafNode*)(uintptr_t)(updateInfo->cNode);
     key = cNode->keys[0]; // get old key.
     isInvalid = deleteLNodeKey(cNode,deleteNode->key);
-    if(updateInfo->cNode != root){
+    if(updateInfo->cNode != root & updateInfo->lNode != -1){
         UpdateLowerboundKeys(root, key,cNode->keys[0]);
     }
     // balance. 
@@ -789,7 +791,7 @@ int deleteKey(BTPage *page,double root, double nodePtr,DeleteNode* deleteNode, U
         // go deeper into the tree 
         index = searchLeafNodeKey(lNode,deleteNode->key);
         if(index == -1){
-            printf("There are no records with key %f\n");
+            printf("There are no records with key %f\n",deleteNode->key);
             resultPtr = -1; 
         }
         // skip depth if whole key is to be deleted.
@@ -944,6 +946,7 @@ int search_counter = 0;
 
 double searchKey(BTPage *page, double node, double key){
     (*(&search_counter))++;
+    ioCount++;
     double result = 0;
     int nodeType, index;
     nodeType = searchPageRecord(page,node);

@@ -19,13 +19,12 @@
 #include "BT/bt_node.c"
 #include "BT/bt_mgr.c"
 
-void printRecords(struct Disk* disk, int numRecordsToPrint);
 
 int main() {
     //create a Disk
     int diskSize = 500 * 1024 * 1024; // 500 MB
     int blkSize = 400; // 400 B
-    int lruCacheSize = 50; // Example size
+    int lruCacheSize = 50 * 1024 * 1024; // Example size
     struct Disk* disk = createDisk(diskSize, blkSize, lruCacheSize);
 
     //Load the data
@@ -51,10 +50,10 @@ int main() {
     char field[20] = "FG_PCT_home";
     BTree *tree = createTree(field);
     InsertNode* insertInfo = (InsertNode*)malloc(sizeof(InsertNode));
-    printf("%s \n","info created");
+    //printf("%s \n","info created");
     int counter = 0; 
     for (int i = 0; i < disk->memdiskSize / disk->blkSize; i++) {
-        printf("i=%d \n",i);
+        //printf("i=%d \n",i);
         if (disk->filledBlocks[i] == 1) { // Ensure block has data before proceeding
             counter++; 
             struct Block* block = getBlock(disk, i);
@@ -62,21 +61,21 @@ int main() {
             
             for (int j = 0; j < numberOfRecordsInBlock; j++) {
                 struct Record rec = getRecordFromBlock(block, j);
-                insertInfo->key = rec.TEAM_ID_home; // Using TEAM_ID_home as the key
-                //insertInfo->key = rec.FG_PCT_home;
+                //insertInfo->key = rec.TEAM_ID_home; // Using TEAM_ID_home as the key
+                insertInfo->key = rec.FG_PCT_home;
                 //insertInfo->ptr = i; // The pointer in this context can be the block number. Adjust as needed.
                 insertInfo->ptr = (double)(uintptr_t)(block);
-                printf("Inserting key: %f into the B+ tree...\n", insertInfo->key);
+                //printf("Inserting key: %f into the B+ tree...\n", insertInfo->key);
                 insertBTreeKey(tree, insertInfo);
-                printf("Root of the B+ tree after insertion: %f\n", tree->root);
+                //printf("Root of the B+ tree after insertion: %f\n", tree->root);
 
-                printf("%f, %f\n",insertInfo->key, insertInfo->ptr);
-}
+                //printf("%f, %f\n",insertInfo->key, insertInfo->ptr);
+            }
         }
         if(counter == getNumberBlockUsed(disk)) break;
     }
     printf("\n----------------------EXPERIMENT 2-----------------------\n");
-    printf("Parameter n of the B+ tree: %d\n", N);
+    printf("Parameter n of the B+ tree: %ld\n", (int)N);
     int nodeCount = countNode(tree);   // Get number of nodes by traversing the tree
     printf("Number of nodes of the B+ tree: %d\n", nodeCount);
     int levelCount = countLevel(tree->page, tree->root); // // Get number of levels
@@ -84,11 +83,31 @@ int main() {
     printf("Number of levels of the B+ tree: %d\n", levelCount);
     printf("Root keys of the B+ tree: ");
     printRootKeys(tree);
-    printBTree(tree); // print the whole tree to debug
+    //printBTree(tree); // print the whole tree to debug
     printf("\n");
 
     printf("\n----------------------EXPERIMENT 3-----------------------\n");
-
+    ListNode* dataPtrs = searchDBKey(tree,0.5);
+    printf("Number of index nodes the process accessed: %d\n",ioCount);
+    RecordNode* records = retrieveRecords(dataPtrs,0.5,0.5);
+    clock_t retrievalT = endT - startT; 
+    printf("Number of datablocks the process accessed: %d\n",ioCount);
+    printf("The average of 'FG3_PCT_home' of the records: %f\n",calculateAverage(records));
+    printf("The running time of the retrieval process(B+ Tree): %lu\n",retrievalT);
+    printf("Number of datablocks the process accessed by brute-force: %d\n",bruteForceSearch(disk,0.5,0.5));
+    printf("The running time of the retrieval process(brute-force): %lu\n",endT-startT);
+    
+    printf("\n----------------------EXPERIMENT 4-----------------------\n");
+    dataPtrs = searchDBRangeKey(tree,0.6,1);
+    printf("Number of index nodes the process accessed: %d\n",ioCount);
+    records = retrieveRecords(dataPtrs,0.6,1);
+    retrievalT = endT - startT; 
+    printf("Number of datablocks the process accessed: %d\n",ioCount);
+    printf("The average of 'FG3_PCT_home' of the records: %f\n",calculateAverage(records));
+    printf("The running time of the retrieval process(B+ Tree): %lu\n",retrievalT);
+    printf("Number of datablocks the process accessed by brute-force: %d\n",bruteForceSearch(disk,0.6,1));
+    printf("The running time of the retrieval process(brute-force): %lu\n",endT-startT);
+    
 
     printf("\n----------------------EXPERIMENT 5-----------------------\n");
     // execute the delete.
@@ -97,15 +116,18 @@ int main() {
     printf("Number of nodes of the updated B+ Tree: %d\n",countLevel(tree->page, tree->root));
     printf("Root keys of the updated B+ tree: ");
     printRootKeys(tree);
-    printf("The running time of the process: %d\n",endT-startT);
+    //printBTree(tree); // print the whole tree to debug
+    printf("The running time of the process: %lu, (IO count = %d)\n",endT-startT,ioCount);
+
+    printf("Number of datablock accessed by a brute-force method: %d\n",bruteForceDelete(disk,0,0.35));
+    printf("The running time of the process: %lu\n",endT-startT);
 
 
     // free the memory
+    deleteBTree(tree);
     freeDisk(disk);
     return 0;   
 }
-
-
 
 
 void printRecords(struct Disk* disk, int numRecordsToPrint) {
@@ -133,3 +155,4 @@ void printRecords(struct Disk* disk, int numRecordsToPrint) {
         }
     }
 }
+

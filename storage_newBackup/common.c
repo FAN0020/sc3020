@@ -5,9 +5,9 @@
 #include "block.h"
 #include "LRUCache.h"
 
-#include "b+tree/bt_page.h"
-#include "b+tree/bt_node.h"
-#include "b+tree/bt_mgr.h"
+#include "BT/bt_page.h"
+#include "BT/bt_node.h"
+#include "BT/bt_mgr.h"
 
 #include "disk.c"
 #include "block.c"

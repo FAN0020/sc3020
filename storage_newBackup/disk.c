@@ -111,17 +111,37 @@ void deleteRecord(struct Block* block, int offset) {
     block->curRecords--;
 }
 
-int runBruteForceSearch(struct Disk* disk, int FG_PCT_homeValue, int FG_PCT_homeValueUpperRange) {
-    int countBlockAccess = 0;
+int runBruteForceSearch(struct Disk* disk, double FG_PCT_homeValue, double FG_PCT_homeValueUpperRange) {
+    int countBlockAccess = 0, countRetrieve = 0;
     for (int i = 0; i < disk->memdiskSize / disk->blkSize; i++) {
         if (disk->filledBlocks[i] == 1) {
+            countBlockAccess++;
             struct Block* block = disk->blocks[i];
             int numberOfRecordsInBlock = getCurSize(block);
             for (int j = 0; j < numberOfRecordsInBlock; j++) {
-                countBlockAccess++;
                 struct Record rec = getRecordFromBlock(block, j);
-                int curFG_PCT_home = rec.FG_PCT_home;
-                if (FG_PCT_homeValue <= curFG_PCT_home && curFG_PCT_home <= FG_PCT_homeValueUpperRange) {             
+                double curFG_PCT_home = rec.FG_PCT_home;
+                if (FG_PCT_homeValue <= curFG_PCT_home && curFG_PCT_home <= FG_PCT_homeValueUpperRange) {  
+                    countRetrieve++;
+                }
+            }
+        }
+    }
+    return countBlockAccess;
+}
+
+int runBruteForceDelete(struct Disk* disk, double FG_PCT_homeValue, double FG_PCT_homeValueUpperRange) {
+    int countBlockAccess = 0, countDeletion = 0;
+    for (int i = 0; i < disk->memdiskSize / disk->blkSize; i++) {
+        if (disk->filledBlocks[i] == 1) {
+            countBlockAccess++;
+            struct Block* block = disk->blocks[i];
+            int numberOfRecordsInBlock = getCurSize(block);
+            for (int j = 0; j < numberOfRecordsInBlock; j++) {
+                struct Record rec = getRecordFromBlock(block, j);
+                double curFG_PCT_home = rec.FG_PCT_home;
+                if (FG_PCT_homeValue <= curFG_PCT_home && curFG_PCT_home <= FG_PCT_homeValueUpperRange) {  
+                    deleteRecord(block,j);    
                 }
             }
         }
