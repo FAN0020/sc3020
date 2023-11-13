@@ -1,0 +1,37 @@
+strict digraph "" {
+	"Sort
+by lineitem.l_returnflag,lineitem.l_linestatus
+using quicksort
+l_returnflag,l_linestatus,(PARTIAL sum(l_quantity)),(PARTIAL \
+sum(l_extendedprice)),(PARTIAL sum((l_extendedprice * ('1'::numeric - l_discount)))),(PARTIAL sum(((l_extendedprice * ('1'::numeric \
+- l_discount)) * ('1'::numeric + l_tax)))),(PARTIAL avg(l_quantity)),(PARTIAL avg(l_extendedprice)),(PARTIAL avg(l_discount)),(PARTIAL \
+count(*))" -> "Aggregate
+by lineitem.l_returnflag,lineitem.l_linestatus
+l_returnflag,l_linestatus,PARTIAL sum(l_quantity),PARTIAL sum(l_extendedprice),\
+PARTIAL sum((l_extendedprice * ('1'::numeric - l_discount))),PARTIAL sum(((l_extendedprice * ('1'::numeric - l_discount)) * ('1'::\
+numeric + l_tax))),PARTIAL avg(l_quantity),PARTIAL avg(l_extendedprice),PARTIAL avg(l_discount),PARTIAL count(*)";
+	"Aggregate
+by lineitem.l_returnflag,lineitem.l_linestatus
+l_returnflag,l_linestatus,PARTIAL sum(l_quantity),PARTIAL sum(l_extendedprice),\
+PARTIAL sum((l_extendedprice * ('1'::numeric - l_discount))),PARTIAL sum(((l_extendedprice * ('1'::numeric - l_discount)) * ('1'::\
+numeric + l_tax))),PARTIAL avg(l_quantity),PARTIAL avg(l_extendedprice),PARTIAL avg(l_discount),PARTIAL count(*)" -> "Seq Scan
+lineitem";
+	"Gather Merge
+l_returnflag,l_linestatus,(PARTIAL sum(l_quantity)),(PARTIAL sum(l_extendedprice)),(PARTIAL sum((l_extendedprice * ('\
+1'::numeric - l_discount)))),(PARTIAL sum(((l_extendedprice * ('1'::numeric - l_discount)) * ('1'::numeric + l_tax)))),(PARTIAL \
+avg(l_quantity)),(PARTIAL avg(l_extendedprice)),(PARTIAL avg(l_discount)),(PARTIAL count(*))" -> "Sort
+by lineitem.l_returnflag,lineitem.l_linestatus
+using quicksort
+l_returnflag,l_linestatus,(PARTIAL sum(l_quantity)),(PARTIAL \
+sum(l_extendedprice)),(PARTIAL sum((l_extendedprice * ('1'::numeric - l_discount)))),(PARTIAL sum(((l_extendedprice * ('1'::numeric \
+- l_discount)) * ('1'::numeric + l_tax)))),(PARTIAL avg(l_quantity)),(PARTIAL avg(l_extendedprice)),(PARTIAL avg(l_discount)),(PARTIAL \
+count(*))";
+	"Aggregate
+by lineitem.l_returnflag,lineitem.l_linestatus
+l_returnflag,l_linestatus,sum(l_quantity),sum(l_extendedprice),sum((l_extendedprice * ('\
+1'::numeric - l_discount))),sum(((l_extendedprice * ('1'::numeric - l_discount)) * ('1'::numeric + l_tax))),avg(l_quantity),avg(\
+l_extendedprice),avg(l_discount),count(*)" -> "Gather Merge
+l_returnflag,l_linestatus,(PARTIAL sum(l_quantity)),(PARTIAL sum(l_extendedprice)),(PARTIAL sum((l_extendedprice * ('\
+1'::numeric - l_discount)))),(PARTIAL sum(((l_extendedprice * ('1'::numeric - l_discount)) * ('1'::numeric + l_tax)))),(PARTIAL \
+avg(l_quantity)),(PARTIAL avg(l_extendedprice)),(PARTIAL avg(l_discount)),(PARTIAL count(*))";
+}
