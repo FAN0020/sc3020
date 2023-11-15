@@ -227,3 +227,11 @@ class QEPVisualizer(QMainWindow):
         self.view.setScene(self.scene)
 
 
+def main():
+    app = QApplication(sys.argv)
+    ex = QEPVisualizer()
+    ex.show()
+    sys.exit(app.exec())
+
+if __name__ == '__main__':
+    main()
