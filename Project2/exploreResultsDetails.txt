@@ -1,0 +1,28 @@
+Information that the results contain. 
+
+
+results is a dictionary.
+{
+'node': {
+"<node name>":
+	{
+	"Node Type":
+	"Relation Name": table name in node 
+	"Sort Key": only applys to sorting, key sorted by
+	"Group Key": only applies to aggregate, group by
+	"Cond": contains some conditions which is some of the where clauses. 
+	"Filter": same as Cond, I realised where clauses are put in both filter and __ Cond.
+	"string": all details placed together. also the node name
+},
+'vertices': list of nodes in the QEP. 
+'edges': connection between the nodes.
+'sql':{
+"<node name>":{
+	'select': variables for select
+	'from': the tables
+	'where': the list of where clauses
+	'order by' : sort by
+	'group by' : group by
+	'ctid' : dataframe with the sqlquery result, + block and tuple of disk accessed. only apply to leaf nodes. 
+	}
+}
