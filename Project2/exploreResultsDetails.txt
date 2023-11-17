@@ -23,6 +23,10 @@ results is a dictionary.
 	'where': the list of where clauses
 	'order by' : sort by
 	'group by' : group by
-	'ctid' : dataframe with the sqlquery result, + block and tuple of disk accessed. only apply to leaf nodes. 
+	'result' : intermediary result of the node
+	'accessResult' : contains information of blocks and tuples accessed, based on indexing key. 
+	'resultBlockAccess': series of blocks and the corresponding list of tuples accessed.
+	'accessResultBlockAccess': series of blocks accessed and the corresponding list of tuples retrieved for the query
+	'RelationBlocks': total number of pages, value is 0 if the table size is too small.
 	}
 }
