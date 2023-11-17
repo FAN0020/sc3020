@@ -8,6 +8,14 @@ import pygraphviz as pgv
 
 # function to run sql to retrieve QEP of query. 
 def retrieveQEP(sql):
+    """function to run sql to retrieve QEP of query. 
+
+    Args:
+        sql (str): sql query to be executed
+
+    Returns:
+        json: detailed json format of the QEP 
+    """
     # adds explain line to retrieve query details including QEP
     sql_exp = "explain (analyze, costs, verbose, buffers, format json) " + sql
 
@@ -28,8 +36,16 @@ def retrieveResult(sql,columns):
     return df
 
 
-# a function to connect to DB and execute query, returning results of query
+# 
 def executeQuery(sql):
+    """a function to connect to DB and execute query, returning results of query
+
+    Args:
+        sql (str): sql query to be executed
+
+    Returns:
+        _type_: result from executing the query
+    """
     # connect to database. 
     # edit values according to your own database.
     conn = psycopg2.connect(database="SC3020Proj2",
@@ -52,6 +68,7 @@ def executeQuery(sql):
 
 # break down current node and get node details.
 def breakdown(curNode):
+
     results ={}
     results["node"] = {}
     results["vertices"] = set()
@@ -73,6 +90,7 @@ def breakdown(curNode):
             childNodeDetails = getNodeDetails(node)
             results["edges"].add((nodeDetails["string"],childNodeDetails["string"]))
             child_results = breakdown(node)
+            # add child information into final output.
             results["node"].update(child_results["node"])
             results["vertices"].update(child_results["vertices"])
             results["edges"].update(child_results["edges"])
@@ -85,6 +103,15 @@ def breakdown(curNode):
     return results
 
 def getIntermediateResults(results):
+    """a function to get the intermediary results at each node
+
+    Args:
+        results (dictionary): dictionary containing node's information, sql, and results.
+
+    Returns:
+        results: dictionary of all accumulated results
+    """
+    # get the intermediary results at each node
     for node in results['node']:
         result, accessResult = getQueryResults(results['sql'][node],results,node)
         for col in result.columns:
@@ -96,22 +123,31 @@ def getIntermediateResults(results):
 
         results['sql'][node]["result"] = result
 
+        # get information on the disks accessed
         print(type(accessResult))
-        if type(accessResult) != type(None): 
+        if type(accessResult) != type(None): # used for index scans where only specific blocks are accessed.
             for col in result.columns:
                 if 'ctid' in col:
                     accessResult['block'] = accessResult[col].apply(lambda x: int((x.replace("(","").replace(")","")).split(",")[0]))
                     accessResult['tuple'] = accessResult[col].apply(lambda x: int((x.replace("(","").replace(")","")).split(",")[1]))
                     results['sql'][node]["accessResultBlockAccess"] = accessResult.groupby('block')['tuple'].apply(list)
                     break
-        elif 'Relation Name' in results["node"][node]: 
+        elif 'Relation Name' in results["node"][node]: # used for sequential scan (seq scan scans all, hence retrieve total number of blocks scanned)
             results['sql'][node]["RelationBlocks"] = executeQuery("SELECT relpages FROM pg_class WHERE relname = '" + results["node"][node]["Relation Name"]+"';")[0][0]
             
     return results
 
 
-# a function get details of a node.
+
 def getNodeDetails(node):
+    """a function to retrieve required information from QEP nodes
+
+    Args:
+        node (dictionary): detailed information of a node provided from the QEP retrieved
+
+    Returns:
+        dictionary: dictionary of important node information needed for exploring the QEP
+    """
     details = {}
 
     # get node type
@@ -189,14 +225,31 @@ def getNodeDetails(node):
 
 
 def concatRelationAlias(relation, alias):
+    """a function to concatenate the relation and alias for use in the "from" portion of the relation.
+
+    Args:
+        relation (str): relation name
+        alias (str): alias used to represent the relation name
+
+    Returns:
+        str: relation name if there is no alias, else relation + alias.
+    """
     if relation == alias:
         return relation
     else:
         return relation + " " + alias
 
 
-# sub function used to get all values from specific keys
 def getKeyValues(node_dict,search_key):
+    """a sub function used to get all values from specific keys
+
+    Args:
+        node_dict (dictionary): dictionary containing node details
+        search_key (_type_): the substring of a key we're looking for
+
+    Returns:
+        list: a list of all the values from keys containing search_key
+    """
     result = []
     values = [value for key, value in node_dict.items() if search_key in key.lower()]
     for val in values: 
@@ -206,14 +259,17 @@ def getKeyValues(node_dict,search_key):
             result.append(val)
     return result
 
-def concatenateRelation(a, b):
-  if a != b:
-    return a + " " + b
-  else: 
-    return a
 
 # a function to get details of node's sql query.
 def getSQL(nodeDetails):
+    """a function to get details of node's sql query
+
+    Args:
+        nodeDetails (dictionary): dictionary containing node details
+
+    Returns:
+        dictionary: a dictionary of all the pieces of an sql
+    """
     sql = {}
     sql['select'] = []
     sql['relation'] = []
@@ -259,6 +315,15 @@ def getSQL(nodeDetails):
 
 # a function to update SQL details with child info node info
 def updateSQL(nodeSQL,childNodeSQL):
+    """a function to update SQL details with child node info as parent node would use the same filters as child node.
+
+    Args:
+        nodeSQL (dictionary): dictionary of sql pieces of the current node.
+        childNodeSQL (dictionary): dictionary of sql pieces of the child node.
+
+    Returns:
+        dictionary: updated sql dictionary of the current node
+    """
     for value in childNodeSQL:
         if value == 'result' or value == 'select': continue
         nodeSQL[value].extend(childNodeSQL[value])
@@ -267,6 +332,17 @@ def updateSQL(nodeSQL,childNodeSQL):
 
 # function to get query results from pieces of sql
 def getQueryResults(sqlDetails, results, nodeName):
+    """a function to get query results from pieces of sql
+
+    Args:
+        sqlDetails (dictionary): dictionary of sql details of the node.
+        results (dictionary): dictionary containing accumulated results
+        nodeName (str): name of the current node
+
+    Returns:
+        result (dataframe): dataframe containing the intermediary results of node.
+        accessResult (dictionary): dataframe containing the details of the blocks accessed and tuples accessed.
+    """
     # execute query and retrieve results.
     try:
         
@@ -313,6 +389,14 @@ def getQueryResults(sqlDetails, results, nodeName):
 
 # a function to piece details of query together, return sql query
 def createQuery(sqlDetails):
+    """a function to piece the details of an sql query together.
+
+    Args:
+        sqlDetails (dictionary ): broken down details of an sql query
+
+    Returns:
+        str: pieced sql query
+    """
     # piece query
     sqlQuery = ""
     if len(sqlDetails['select']) > 0: 
