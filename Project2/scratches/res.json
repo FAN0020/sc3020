@@ -1,0 +1,3 @@
+{
+    "Aggregate\ngroup byn1.n_name,n2.n_name,(date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone))\nn1.n_name,n2.n_name,(date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone)),sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount)))": [
+        

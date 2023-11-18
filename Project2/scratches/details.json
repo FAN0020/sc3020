@@ -1,0 +1,10 @@
+{
+    "Node Type": "Seq Scan",
+    "Actual Rows": 2,
+    "Actual Total Time": 0.053,
+    "Total Cost": 12.55,
+    "Duration Percent": 0.01,
+    "Cost Percent": 0.02,
+    "Rows Removed Percent": 575.0,
+    "string": "Seq Scan\nRows: 2\nTime: 0.053\nCost: 12.55\nDuration %: 0.01\nCost %: 0.02\nRows Removed %: 575.0"
+}

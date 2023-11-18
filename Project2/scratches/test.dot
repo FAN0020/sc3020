@@ -1,0 +1,114 @@
+strict digraph "" {
+	"Aggregate
+group byn1.n_name,n2.n_name,(date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone))
+n1.n_name,n2.n_\
+name,(date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone)),PARTIAL sum((lineitem.l_extendedprice * ('1'::\
+numeric - lineitem.l_discount)))" -> "Sort
+sort by n1.n_name,n2.n_name,(date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone))
+using quicksort
+n1.n_\
+name,n2.n_name,(date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone)),lineitem.l_extendedprice,lineitem.l_\
+discount";
+	"Hash Join
+by (customer.c_nationkey = n2.n_nationkey)
+customer.c_custkey,n2.n_name" -> "Seq Scan
+by (customer.c_acctbal > '10'::numeric)
+on customer
+on customer
+customer.c_custkey,customer.c_name,customer.c_address,customer.c_\
+nationkey,customer.c_phone,customer.c_acctbal,customer.c_mktsegment,customer.c_comment";
+	"Hash Join
+by (customer.c_nationkey = n2.n_nationkey)
+customer.c_custkey,n2.n_name" -> "Hash
+n2.n_name,n2.n_nationkey";
+	"Hash Join
+by (supplier.s_nationkey = n1.n_nationkey)
+supplier.s_suppkey,n1.n_name" -> "Hash
+n1.n_name,n1.n_nationkey";
+	"Hash Join
+by (supplier.s_nationkey = n1.n_nationkey)
+supplier.s_suppkey,n1.n_name" -> "Seq Scan
+on supplier
+on supplier
+supplier.s_suppkey,supplier.s_name,supplier.s_address,supplier.s_nationkey,supplier.s_phone,supplier.s_\
+acctbal,supplier.s_comment";
+	"Hash
+n1.n_name,n1.n_nationkey" -> "Seq Scan
+by ((n1.n_name = 'FRANCE'::bpchar) OR (n1.n_name = 'GERMANY'::bpchar))
+on nation
+on n1
+n1.n_name,n1.n_nationkey";
+	"Hash Join
+by (orders.o_custkey = customer.c_custkey)
+orders.o_orderkey,n2.n_name" -> "Hash
+customer.c_custkey,n2.n_name";
+	"Hash Join
+by (orders.o_custkey = customer.c_custkey)
+orders.o_orderkey,n2.n_name" -> "Seq Scan
+by (orders.o_totalprice > '100'::numeric)
+on orders
+on orders
+orders.o_orderkey,orders.o_custkey,orders.o_orderstatus,orders.o_\
+totalprice,orders.o_orderdate,orders.o_orderpriority,orders.o_clerk,orders.o_shippriority,orders.o_comment";
+	"Hash Join
+by (lineitem.l_suppkey = supplier.s_suppkey)
+n1.n_name,n2.n_name,date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp \
+without time zone),lineitem.l_extendedprice,lineitem.l_discount" -> "Nested Loop
+lineitem.l_shipdate,lineitem.l_extendedprice,lineitem.l_discount,lineitem.l_suppkey,n2.n_name";
+	"Hash Join
+by (lineitem.l_suppkey = supplier.s_suppkey)
+n1.n_name,n2.n_name,date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp \
+without time zone),lineitem.l_extendedprice,lineitem.l_discount" -> "Hash
+supplier.s_suppkey,n1.n_name";
+	"Aggregate
+group byn1.n_name,n2.n_name,(date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone))
+n1.n_name,n2.n_\
+name,(date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone)),sum((lineitem.l_extendedprice * ('1'::numeric \
+- lineitem.l_discount)))" -> "Gather Merge
+n1.n_name,n2.n_name,(date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone)),(PARTIAL sum((lineitem.l_\
+extendedprice * ('1'::numeric - lineitem.l_discount))))";
+	"Nested Loop
+lineitem.l_shipdate,lineitem.l_extendedprice,lineitem.l_discount,lineitem.l_suppkey,n2.n_name" -> "Index Scan
+by (lineitem.l_orderkey = orders.o_orderkey)
+by ((lineitem.l_shipdate >= '1995-01-01'::date) AND (lineitem.l_shipdate <= '\
+1996-12-31'::date))
+on lineitem
+on lineitem
+lineitem.l_orderkey,lineitem.l_partkey,lineitem.l_suppkey,lineitem.l_linenumber,lineitem.l_\
+quantity,lineitem.l_extendedprice,lineitem.l_discount,lineitem.l_tax,lineitem.l_returnflag,lineitem.l_linestatus,lineitem.l_shipdate,\
+lineitem.l_commitedate,lineitem.l_receiptdate,lineitem.l_shipinstruct,lineitem.l_shipmode,lineitem.l_comment";
+	"Nested Loop
+lineitem.l_shipdate,lineitem.l_extendedprice,lineitem.l_discount,lineitem.l_suppkey,n2.n_name" -> "Hash Join
+by (orders.o_custkey = customer.c_custkey)
+orders.o_orderkey,n2.n_name";
+	"Gather Merge
+n1.n_name,n2.n_name,(date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone)),(PARTIAL sum((lineitem.l_\
+extendedprice * ('1'::numeric - lineitem.l_discount))))" -> "Aggregate
+group byn1.n_name,n2.n_name,(date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone))
+n1.n_name,n2.n_\
+name,(date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone)),PARTIAL sum((lineitem.l_extendedprice * ('1'::\
+numeric - lineitem.l_discount)))";
+	"Hash
+customer.c_custkey,n2.n_name" -> "Hash Join
+by (customer.c_nationkey = n2.n_nationkey)
+customer.c_custkey,n2.n_name";
+	"Sort
+sort by n1.n_name,n2.n_name,(date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone))
+using quicksort
+n1.n_\
+name,n2.n_name,(date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone)),lineitem.l_extendedprice,lineitem.l_\
+discount" -> "Hash Join
+by (lineitem.l_suppkey = supplier.s_suppkey)
+n1.n_name,n2.n_name,date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp \
+without time zone),lineitem.l_extendedprice,lineitem.l_discount";
+	"Hash
+supplier.s_suppkey,n1.n_name" -> "Hash Join
+by (supplier.s_nationkey = n1.n_nationkey)
+supplier.s_suppkey,n1.n_name";
+	"Hash
+n2.n_name,n2.n_nationkey" -> "Seq Scan
+by ((n2.n_name = 'GERMANY'::bpchar) OR (n2.n_name = 'FRANCE'::bpchar))
+on nation
+on n2
+n2.n_name,n2.n_nationkey";
+}

@@ -1,0 +1,315 @@
+{
+    "node": {
+        "Aggregate\ngroup byn1.n_name,n2.n_name,(date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone))\nn1.n_name,n2.n_name,(date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone)),sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount)))": {
+            "Node Type": "Aggregate",
+            "Group Key": [
+                "n1.n_name",
+                "n2.n_name",
+                "(date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone))"
+            ],
+            "Output": [
+                "n1.n_name",
+                "n2.n_name",
+                "(date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone))",
+                "sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount)))"
+            ],
+            "string": "Aggregate\ngroup byn1.n_name,n2.n_name,(date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone))\nn1.n_name,n2.n_name,(date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone)),sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount)))"
+        },
+        "Gather Merge\nn1.n_name,n2.n_name,(date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone)),(PARTIAL sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount))))": {
+            "Node Type": "Gather Merge",
+            "Output": [
+                "n1.n_name",
+                "n2.n_name",
+                "(date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone))",
+                "(PARTIAL sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount))))"
+            ],
+            "string": "Gather Merge\nn1.n_name,n2.n_name,(date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone)),(PARTIAL sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount))))",
+            "siblings": [
+                "Gather Merge\nn1.n_name,n2.n_name,(date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone)),(PARTIAL sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount))))"
+            ]
+        },
+        "Aggregate\ngroup byn1.n_name,n2.n_name,(date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone))\nn1.n_name,n2.n_name,(date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone)),PARTIAL sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount)))": {
+            "Node Type": "Aggregate",
+            "Group Key": [
+                "n1.n_name",
+                "n2.n_name",
+                "(date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone))"
+            ],
+            "Output": [
+                "n1.n_name",
+                "n2.n_name",
+                "(date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone))",
+                "PARTIAL sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount)))"
+            ],
+            "string": "Aggregate\ngroup byn1.n_name,n2.n_name,(date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone))\nn1.n_name,n2.n_name,(date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone)),PARTIAL sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount)))",
+            "siblings": [
+                "Aggregate\ngroup byn1.n_name,n2.n_name,(date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone))\nn1.n_name,n2.n_name,(date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone)),PARTIAL sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount)))"
+            ]
+        },
+        "Sort\nsort by n1.n_name,n2.n_name,(date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone))\nusing quicksort\nn1.n_name,n2.n_name,(date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone)),lineitem.l_extendedprice,lineitem.l_discount": {
+            "Node Type": "Sort",
+            "Sort Key": [
+                "n1.n_name",
+                "n2.n_name",
+                "(date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone))"
+            ],
+            "Method": [
+                "quicksort"
+            ],
+            "Output": [
+                "n1.n_name",
+                "n2.n_name",
+                "(date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone))",
+                "lineitem.l_extendedprice",
+                "lineitem.l_discount"
+            ],
+            "string": "Sort\nsort by n1.n_name,n2.n_name,(date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone))\nusing quicksort\nn1.n_name,n2.n_name,(date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone)),lineitem.l_extendedprice,lineitem.l_discount",
+            "siblings": [
+                "Sort\nsort by n1.n_name,n2.n_name,(date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone))\nusing quicksort\nn1.n_name,n2.n_name,(date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone)),lineitem.l_extendedprice,lineitem.l_discount"
+            ]
+        },
+        "Hash Join\nby (lineitem.l_suppkey = supplier.s_suppkey)\nn1.n_name,n2.n_name,date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone),lineitem.l_extendedprice,lineitem.l_discount": {
+            "Node Type": "Hash Join",
+            "Cond": [
+                "(lineitem.l_suppkey = supplier.s_suppkey)"
+            ],
+            "Output": [
+                "n1.n_name",
+                "n2.n_name",
+                "date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone)",
+                "lineitem.l_extendedprice",
+                "lineitem.l_discount"
+            ],
+            "string": "Hash Join\nby (lineitem.l_suppkey = supplier.s_suppkey)\nn1.n_name,n2.n_name,date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone),lineitem.l_extendedprice,lineitem.l_discount",
+            "siblings": [
+                "Hash Join\nby (lineitem.l_suppkey = supplier.s_suppkey)\nn1.n_name,n2.n_name,date_part('YEAR'::text, (lineitem.l_shipdate)::timestamp without time zone),lineitem.l_extendedprice,lineitem.l_discount"
+            ]
+        },
+        "Nested Loop\nlineitem.l_shipdate,lineitem.l_extendedprice,lineitem.l_discount,lineitem.l_suppkey,n2.n_name": {
+            "Node Type": "Nested Loop",
+            "Output": [
+                "lineitem.l_shipdate",
+                "lineitem.l_extendedprice",
+                "lineitem.l_discount",
+                "lineitem.l_suppkey",
+                "n2.n_name"
+            ],
+            "string": "Nested Loop\nlineitem.l_shipdate,lineitem.l_extendedprice,lineitem.l_discount,lineitem.l_suppkey,n2.n_name",
+            "siblings": [
+                "Nested Loop\nlineitem.l_shipdate,lineitem.l_extendedprice,lineitem.l_discount,lineitem.l_suppkey,n2.n_name",
+                "Hash\nsupplier.s_suppkey,n1.n_name"
+            ]
+        },
+        "Hash Join\nby (orders.o_custkey = customer.c_custkey)\norders.o_orderkey,n2.n_name": {
+            "Node Type": "Hash Join",
+            "Cond": [
+                "(orders.o_custkey = customer.c_custkey)"
+            ],
+            "Output": [
+                "orders.o_orderkey",
+                "n2.n_name"
+            ],
+            "string": "Hash Join\nby (orders.o_custkey = customer.c_custkey)\norders.o_orderkey,n2.n_name",
+            "siblings": [
+                "Hash Join\nby (orders.o_custkey = customer.c_custkey)\norders.o_orderkey,n2.n_name",
+                "Index Scan\nby (lineitem.l_orderkey = orders.o_orderkey)\nby ((lineitem.l_shipdate >= '1995-01-01'::date) AND (lineitem.l_shipdate <= '1996-12-31'::date))\non lineitem\non lineitem\nlineitem.l_orderkey,lineitem.l_partkey,lineitem.l_suppkey,lineitem.l_linenumber,lineitem.l_quantity,lineitem.l_extendedprice,lineitem.l_discount,lineitem.l_tax,lineitem.l_returnflag,lineitem.l_linestatus,lineitem.l_shipdate,lineitem.l_commitedate,lineitem.l_receiptdate,lineitem.l_shipinstruct,lineitem.l_shipmode,lineitem.l_comment"
+            ]
+        },
+        "Seq Scan\nby (orders.o_totalprice > '100'::numeric)\non orders\non orders\norders.o_orderkey,orders.o_custkey,orders.o_orderstatus,orders.o_totalprice,orders.o_orderdate,orders.o_orderpriority,orders.o_clerk,orders.o_shippriority,orders.o_comment": {
+            "Node Type": "Seq Scan",
+            "Filter": "(orders.o_totalprice > '100'::numeric)",
+            "Relation Name": "orders",
+            "Alias": "orders",
+            "Output": [
+                "orders.o_orderkey",
+                "orders.o_custkey",
+                "orders.o_orderstatus",
+                "orders.o_totalprice",
+                "orders.o_orderdate",
+                "orders.o_orderpriority",
+                "orders.o_clerk",
+                "orders.o_shippriority",
+                "orders.o_comment"
+            ],
+            "string": "Seq Scan\nby (orders.o_totalprice > '100'::numeric)\non orders\non orders\norders.o_orderkey,orders.o_custkey,orders.o_orderstatus,orders.o_totalprice,orders.o_orderdate,orders.o_orderpriority,orders.o_clerk,orders.o_shippriority,orders.o_comment",
+            "siblings": [
+                "Seq Scan\nby (orders.o_totalprice > '100'::numeric)\non orders\non orders\norders.o_orderkey,orders.o_custkey,orders.o_orderstatus,orders.o_totalprice,orders.o_orderdate,orders.o_orderpriority,orders.o_clerk,orders.o_shippriority,orders.o_comment",
+                "Hash\ncustomer.c_custkey,n2.n_name"
+            ]
+        },
+        "Hash\ncustomer.c_custkey,n2.n_name": {
+            "Node Type": "Hash",
+            "Output": [
+                "customer.c_custkey",
+                "n2.n_name"
+            ],
+            "string": "Hash\ncustomer.c_custkey,n2.n_name",
+            "siblings": [
+                "Seq Scan\nby (orders.o_totalprice > '100'::numeric)\non orders\non orders\norders.o_orderkey,orders.o_custkey,orders.o_orderstatus,orders.o_totalprice,orders.o_orderdate,orders.o_orderpriority,orders.o_clerk,orders.o_shippriority,orders.o_comment",
+                "Hash\ncustomer.c_custkey,n2.n_name"
+            ]
+        },
+        "Hash Join\nby (customer.c_nationkey = n2.n_nationkey)\ncustomer.c_custkey,n2.n_name": {
+            "Node Type": "Hash Join",
+            "Cond": [
+                "(customer.c_nationkey = n2.n_nationkey)"
+            ],
+            "Output": [
+                "customer.c_custkey",
+                "n2.n_name"
+            ],
+            "string": "Hash Join\nby (customer.c_nationkey = n2.n_nationkey)\ncustomer.c_custkey,n2.n_name",
+            "siblings": [
+                "Hash Join\nby (customer.c_nationkey = n2.n_nationkey)\ncustomer.c_custkey,n2.n_name"
+            ]
+        },
+        "Seq Scan\nby (customer.c_acctbal > '10'::numeric)\non customer\non customer\ncustomer.c_custkey,customer.c_name,customer.c_address,customer.c_nationkey,customer.c_phone,customer.c_acctbal,customer.c_mktsegment,customer.c_comment": {
+            "Node Type": "Seq Scan",
+            "Filter": "(customer.c_acctbal > '10'::numeric)",
+            "Relation Name": "customer",
+            "Alias": "customer",
+            "Output": [
+                "customer.c_custkey",
+                "customer.c_name",
+                "customer.c_address",
+                "customer.c_nationkey",
+                "customer.c_phone",
+                "customer.c_acctbal",
+                "customer.c_mktsegment",
+                "customer.c_comment"
+            ],
+            "string": "Seq Scan\nby (customer.c_acctbal > '10'::numeric)\non customer\non customer\ncustomer.c_custkey,customer.c_name,customer.c_address,customer.c_nationkey,customer.c_phone,customer.c_acctbal,customer.c_mktsegment,customer.c_comment",
+            "siblings": [
+                "Seq Scan\nby (customer.c_acctbal > '10'::numeric)\non customer\non customer\ncustomer.c_custkey,customer.c_name,customer.c_address,customer.c_nationkey,customer.c_phone,customer.c_acctbal,customer.c_mktsegment,customer.c_comment",
+                "Hash\nn2.n_name,n2.n_nationkey"
+            ]
+        },
+        "Hash\nn2.n_name,n2.n_nationkey": {
+            "Node Type": "Hash",
+            "Output": [
+                "n2.n_name",
+                "n2.n_nationkey"
+            ],
+            "string": "Hash\nn2.n_name,n2.n_nationkey",
+            "siblings": [
+                "Seq Scan\nby (customer.c_acctbal > '10'::numeric)\non customer\non customer\ncustomer.c_custkey,customer.c_name,customer.c_address,customer.c_nationkey,customer.c_phone,customer.c_acctbal,customer.c_mktsegment,customer.c_comment",
+                "Hash\nn2.n_name,n2.n_nationkey"
+            ]
+        },
+        "Seq Scan\nby ((n2.n_name = 'GERMANY'::bpchar) OR (n2.n_name = 'FRANCE'::bpchar))\non nation\non n2\nn2.n_name,n2.n_nationkey": {
+            "Node Type": "Seq Scan",
+            "Filter": "((n2.n_name = 'GERMANY'::bpchar) OR (n2.n_name = 'FRANCE'::bpchar))",
+            "Relation Name": "nation",
+            "Alias": "n2",
+            "Output": [
+                "n2.n_name",
+                "n2.n_nationkey"
+            ],
+            "string": "Seq Scan\nby ((n2.n_name = 'GERMANY'::bpchar) OR (n2.n_name = 'FRANCE'::bpchar))\non nation\non n2\nn2.n_name,n2.n_nationkey",
+            "siblings": [
+                "Seq Scan\nby ((n2.n_name = 'GERMANY'::bpchar) OR (n2.n_name = 'FRANCE'::bpchar))\non nation\non n2\nn2.n_name,n2.n_nationkey"
+            ]
+        },
+        "Index Scan\nby (lineitem.l_orderkey = orders.o_orderkey)\nby ((lineitem.l_shipdate >= '1995-01-01'::date) AND (lineitem.l_shipdate <= '1996-12-31'::date))\non lineitem\non lineitem\nlineitem.l_orderkey,lineitem.l_partkey,lineitem.l_suppkey,lineitem.l_linenumber,lineitem.l_quantity,lineitem.l_extendedprice,lineitem.l_discount,lineitem.l_tax,lineitem.l_returnflag,lineitem.l_linestatus,lineitem.l_shipdate,lineitem.l_commitedate,lineitem.l_receiptdate,lineitem.l_shipinstruct,lineitem.l_shipmode,lineitem.l_comment": {
+            "Node Type": "Index Scan",
+            "Cond": null,
+            "Filter": "((lineitem.l_shipdate >= '1995-01-01'::date) AND (lineitem.l_shipdate <= '1996-12-31'::date))",
+            "Relation Name": "lineitem",
+            "Alias": "lineitem",
+            "Output": [
+                "lineitem.l_orderkey",
+                "lineitem.l_partkey",
+                "lineitem.l_suppkey",
+                "lineitem.l_linenumber",
+                "lineitem.l_quantity",
+                "lineitem.l_extendedprice",
+                "lineitem.l_discount",
+                "lineitem.l_tax",
+                "lineitem.l_returnflag",
+                "lineitem.l_linestatus",
+                "lineitem.l_shipdate",
+                "lineitem.l_commitedate",
+                "lineitem.l_receiptdate",
+                "lineitem.l_shipinstruct",
+                "lineitem.l_shipmode",
+                "lineitem.l_comment"
+            ],
+            "string": "Index Scan\nby (lineitem.l_orderkey = orders.o_orderkey)\nby ((lineitem.l_shipdate >= '1995-01-01'::date) AND (lineitem.l_shipdate <= '1996-12-31'::date))\non lineitem\non lineitem\nlineitem.l_orderkey,lineitem.l_partkey,lineitem.l_suppkey,lineitem.l_linenumber,lineitem.l_quantity,lineitem.l_extendedprice,lineitem.l_discount,lineitem.l_tax,lineitem.l_returnflag,lineitem.l_linestatus,lineitem.l_shipdate,lineitem.l_commitedate,lineitem.l_receiptdate,lineitem.l_shipinstruct,lineitem.l_shipmode,lineitem.l_comment",
+            "siblings": [
+                "Hash Join\nby (orders.o_custkey = customer.c_custkey)\norders.o_orderkey,n2.n_name",
+                "Index Scan\nby (lineitem.l_orderkey = orders.o_orderkey)\nby ((lineitem.l_shipdate >= '1995-01-01'::date) AND (lineitem.l_shipdate <= '1996-12-31'::date))\non lineitem\non lineitem\nlineitem.l_orderkey,lineitem.l_partkey,lineitem.l_suppkey,lineitem.l_linenumber,lineitem.l_quantity,lineitem.l_extendedprice,lineitem.l_discount,lineitem.l_tax,lineitem.l_returnflag,lineitem.l_linestatus,lineitem.l_shipdate,lineitem.l_commitedate,lineitem.l_receiptdate,lineitem.l_shipinstruct,lineitem.l_shipmode,lineitem.l_comment"
+            ]
+        },
+        "Hash\nsupplier.s_suppkey,n1.n_name": {
+            "Node Type": "Hash",
+            "Output": [
+                "supplier.s_suppkey",
+                "n1.n_name"
+            ],
+            "string": "Hash\nsupplier.s_suppkey,n1.n_name",
+            "siblings": [
+                "Nested Loop\nlineitem.l_shipdate,lineitem.l_extendedprice,lineitem.l_discount,lineitem.l_suppkey,n2.n_name",
+                "Hash\nsupplier.s_suppkey,n1.n_name"
+            ]
+        },
+        "Hash Join\nby (supplier.s_nationkey = n1.n_nationkey)\nsupplier.s_suppkey,n1.n_name": {
+            "Node Type": "Hash Join",
+            "Cond": [
+                "(supplier.s_nationkey = n1.n_nationkey)"
+            ],
+            "Output": [
+                "supplier.s_suppkey",
+                "n1.n_name"
+            ],
+            "string": "Hash Join\nby (supplier.s_nationkey = n1.n_nationkey)\nsupplier.s_suppkey,n1.n_name",
+            "siblings": [
+                "Hash Join\nby (supplier.s_nationkey = n1.n_nationkey)\nsupplier.s_suppkey,n1.n_name"
+            ]
+        },
+        "Seq Scan\non supplier\non supplier\nsupplier.s_suppkey,supplier.s_name,supplier.s_address,supplier.s_nationkey,supplier.s_phone,supplier.s_acctbal,supplier.s_comment": {
+            "Node Type": "Seq Scan",
+            "Relation Name": "supplier",
+            "Alias": "supplier",
+            "Output": [
+                "supplier.s_suppkey",
+                "supplier.s_name",
+                "supplier.s_address",
+                "supplier.s_nationkey",
+                "supplier.s_phone",
+                "supplier.s_acctbal",
+                "supplier.s_comment"
+            ],
+            "string": "Seq Scan\non supplier\non supplier\nsupplier.s_suppkey,supplier.s_name,supplier.s_address,supplier.s_nationkey,supplier.s_phone,supplier.s_acctbal,supplier.s_comment",
+            "siblings": [
+                "Seq Scan\non supplier\non supplier\nsupplier.s_suppkey,supplier.s_name,supplier.s_address,supplier.s_nationkey,supplier.s_phone,supplier.s_acctbal,supplier.s_comment",
+                "Hash\nn1.n_name,n1.n_nationkey"
+            ]
+        },
+        "Hash\nn1.n_name,n1.n_nationkey": {
+            "Node Type": "Hash",
+            "Output": [
+                "n1.n_name",
+                "n1.n_nationkey"
+            ],
+            "string": "Hash\nn1.n_name,n1.n_nationkey",
+            "siblings": [
+                "Seq Scan\non supplier\non supplier\nsupplier.s_suppkey,supplier.s_name,supplier.s_address,supplier.s_nationkey,supplier.s_phone,supplier.s_acctbal,supplier.s_comment",
+                "Hash\nn1.n_name,n1.n_nationkey"
+            ]
+        },
+        "Seq Scan\nby ((n1.n_name = 'FRANCE'::bpchar) OR (n1.n_name = 'GERMANY'::bpchar))\non nation\non n1\nn1.n_name,n1.n_nationkey": {
+            "Node Type": "Seq Scan",
+            "Filter": "((n1.n_name = 'FRANCE'::bpchar) OR (n1.n_name = 'GERMANY'::bpchar))",
+            "Relation Name": "nation",
+            "Alias": "n1",
+            "Output": [
+                "n1.n_name",
+                "n1.n_nationkey"
+            ],
+            "string": "Seq Scan\nby ((n1.n_name = 'FRANCE'::bpchar) OR (n1.n_name = 'GERMANY'::bpchar))\non nation\non n1\nn1.n_name,n1.n_nationkey",
+            "siblings": [
+                "Seq Scan\nby ((n1.n_name = 'FRANCE'::bpchar) OR (n1.n_name = 'GERMANY'::bpchar))\non nation\non n1\nn1.n_name,n1.n_nationkey"
+            ]
+        }
+    },
+    "vertices": 
